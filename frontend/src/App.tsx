@@ -1,15 +1,26 @@
+import styled from 'styled-components';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { GlobalStyles } from './styles/GlobalStyles';
 import { useZypherAgent } from './hooks/useZypherAgent';
 import { Header } from './components/Header';
 import { ChatMessages } from './components/ChatMessages';
 import { ChatInput } from './components/ChatInput';
 import logo from './assets/images/corespeed-logo-new.svg';
-import './App.css';
 
-function App() {
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: system-ui, sans-serif;
+  background: ${props => props.theme.bgPrimary};
+  transition: all 0.3s ease;
+`;
+
+function AppContent() {
   const { messages, isConnected, isLoading, sendMessage, clearMessages } = useZypherAgent('ws://localhost:8000/ws');
 
   return (
-    <div className="app">
+    <AppContainer>
       <Header 
         logo={logo}
         isConnected={isConnected}
@@ -26,7 +37,16 @@ function App() {
         isConnected={isConnected}
         isLoading={isLoading}
       />
-    </div>
+    </AppContainer>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <GlobalStyles />
+      <AppContent />
+    </ThemeProvider>
   );
 }
 
