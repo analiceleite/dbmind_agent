@@ -7,10 +7,12 @@ import { MessagesContainer, LoadingMessage, LoadingHeader, LoadingText, LoadingI
 interface ChatMessagesProps {
   messages: Message[];
   isLoading: boolean;
-  onStartChat: () => void;
+  onStartChat: (message: string) => void;
+  isConnected: boolean;
+  isTransitioning: boolean;
 }
 
-export const ChatMessages = ({ messages, isLoading, onStartChat }: ChatMessagesProps) => {
+export const ChatMessages = ({ messages, isLoading, isTransitioning }: ChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -25,7 +27,7 @@ export const ChatMessages = ({ messages, isLoading, onStartChat }: ChatMessagesP
 
   return (
     <MessagesContainer>
-      {showWelcome && <WelcomeMessage onStartChat={onStartChat} />}
+      {showWelcome && <WelcomeMessage isTransitioning={isTransitioning} />}
       
       {messages.map((msg) => (
         <MessageItem key={msg.id} message={msg} />

@@ -102,7 +102,7 @@ export const Particle = styled.div<{ delay: number; duration: number; left: numb
   }
 `;
 
-export const WelcomeContainer = styled.div`
+export const WelcomeContainer = styled.div<{ isTransitioning?: boolean }>`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -111,11 +111,23 @@ export const WelcomeContainer = styled.div`
   z-index: 10;
   max-width: 90vw;
   width: 100%;
+  transition: opacity 0.6s ease;
+  
+  ${props => props.isTransitioning && `
+    opacity: 0;
+  `}
 `;
 
-export const WelcomeContent = styled.div`
+export const WelcomeContent = styled.div<{ isTransitioning?: boolean }>`
   padding: 0 2rem;
   animation: ${floatAnimation} 8s ease-in-out infinite;
+  transition: all 0.6s ease;
+  
+  ${props => props.isTransitioning && `
+    opacity: 0;
+    transform: translateY(-30px);
+    animation: none;
+  `}
 `;
 
 export const WelcomeTitle = styled.h1`
@@ -233,47 +245,70 @@ export const FeatureText = styled.span`
   }
 `;
 
-export const StartButton = styled.button`
-  background: transparent;
-  border: 2px solid ${props => props.theme.textAccent};
-  color: ${props => props.theme.textAccent};
-  padding: 1rem 2.5rem;
-  border-radius: 2px;
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: inherit;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
+export const WelcomeInputForm = styled.form`
   opacity: 0;
   animation: ${staggerIn} 0.8s ease-out 1s forwards;
+`;
+
+export const WelcomeInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto;
+  background: ${props => props.theme.bgSecondary};
+  border: 2px solid ${props => props.theme.textAccent};
+  border-radius: 8px;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
+  &:focus-within {
+    border-color: ${props => props.theme.textAccent};
+    box-shadow: 0 0 0 3px rgba(95, 174, 255, 0.1);
+  }
+`;
+
+export const WelcomeInputField = styled.input`
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: ${props => props.theme.textPrimary};
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  
+  &::placeholder {
+    color: ${props => props.theme.textSecondary};
+    opacity: 0.7;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const WelcomeInputButton = styled.button`
+  background: ${props => props.theme.textAccent};
+  border: none;
+  border-radius: 6px;
+  color: ${props => props.theme.bgPrimary};
+  padding: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover:not(:disabled) {
     background: ${props => props.theme.textAccent};
-    transition: left 0.4s ease;
-    z-index: -1;
+    opacity: 0.9;
+    transform: scale(1.05);
   }
   
-  &:hover {
-    color: ${props => props.theme.bgPrimary};
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(95, 174, 255, 0.3);
-  }
-  
-  &:hover::before {
-    left: 0;
-  }
-  
-  &:active {
-    transform: translateY(-1px);
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
   }
 `;

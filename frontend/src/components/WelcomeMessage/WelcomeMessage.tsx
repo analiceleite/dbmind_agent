@@ -1,34 +1,36 @@
 import { useState } from 'react';
 import { RocketIcon, BulbIcon, BookIcon, TargetIcon } from '../LucideIcons/LucideIcons';
-import { WelcomeContainer, WelcomeContent, WelcomeFeatures, WelcomeSubtitle, WelcomeTitle, FeatureIcon, FeatureItem, FeatureText, StartButton } from './WelcomeMessageStyle';
 import { ParticlesEffect } from './ParticlesEffect';
+import {
+  WelcomeContainer,
+  WelcomeContent,
+  WelcomeTitle,
+  WelcomeSubtitle,
+  WelcomeFeatures,
+  FeatureItem,
+  FeatureIcon,
+  FeatureText,
+  WelcomeInputContainer,
+  WelcomeInputField,
+  WelcomeInputButton,
+  WelcomeInputForm
+} from './WelcomeMessageStyle';
 
 interface WelcomeMessageProps {
-  onStartChat: () => void;
+  isTransitioning: boolean;
+  children?: React.ReactNode;
 }
 
-export const WelcomeMessage = ({ onStartChat }: WelcomeMessageProps) => {
-  const [particlesVisible, setParticlesVisible] = useState(true);
-
-  const handleStartChat = () => {
-    // Fade out particles before starting chat
-    setParticlesVisible(false);
-    
-    // Wait for fade out animation to complete before calling onStartChat
-    setTimeout(() => {
-      onStartChat();
-    }, 600); 
-  };
-
+export const WelcomeMessage = ({ isTransitioning, children }: WelcomeMessageProps) => {
+  const [particlesVisible] = useState(!isTransitioning);
   return (
     <>
       <ParticlesEffect isVisible={particlesVisible} />
-      <WelcomeContainer>
-        <WelcomeContent>
+      <WelcomeContainer isTransitioning={isTransitioning}>
+        <WelcomeContent isTransitioning={isTransitioning}>
           <WelcomeTitle>React Agent</WelcomeTitle>
           <WelcomeSubtitle>
-            Your intelligent assistant for mastering React with clear explanations, 
-            practical examples, and real-time answers.
+            Your intelligent assistant for mastering React with clear explanations, practical examples, and real-time answers.
           </WelcomeSubtitle>
 
           <WelcomeFeatures>
@@ -36,31 +38,30 @@ export const WelcomeMessage = ({ onStartChat }: WelcomeMessageProps) => {
               <FeatureIcon className="feature-icon">
                 <RocketIcon />
               </FeatureIcon>
-              <FeatureText>Instant responses</FeatureText>
+              <FeatureText>Instant Answers</FeatureText>
             </FeatureItem>
             <FeatureItem>
               <FeatureIcon className="feature-icon">
                 <BulbIcon />
               </FeatureIcon>
-              <FeatureText>Practical examples</FeatureText>
+              <FeatureText>Practical Examples</FeatureText>
             </FeatureItem>
             <FeatureItem>
               <FeatureIcon className="feature-icon">
                 <BookIcon />
               </FeatureIcon>
-              <FeatureText>Detailed explanations</FeatureText>
+              <FeatureText>Detailed Explanations</FeatureText>
             </FeatureItem>
             <FeatureItem>
               <FeatureIcon className="feature-icon">
                 <TargetIcon />
               </FeatureIcon>
-              <FeatureText>Specialized focus</FeatureText>
+              <FeatureText>Specialized Focus</FeatureText>
             </FeatureItem>
           </WelcomeFeatures>
-
-          <StartButton onClick={handleStartChat}>
-            Get started now
-          </StartButton>
+          
+          {/* Area for responsive input */}
+          {children}
         </WelcomeContent>
       </WelcomeContainer>
     </>

@@ -1,5 +1,9 @@
 version: '3.8'
 
+# frontend service
+
+# backend service
+
 services:
   ollama:
     image: ollama/ollama:latest

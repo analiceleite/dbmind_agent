@@ -6,10 +6,11 @@ interface ChatInputProps {
   onSendMessage: (message: string) => void;
   isConnected: boolean;
   isLoading: boolean;
+  hasMessages?: boolean;
 }
 
 export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
-  ({ onSendMessage, isConnected, isLoading }, ref) => {
+  ({ onSendMessage, isConnected, isLoading, hasMessages }, ref) => {
     const [input, setInput] = useState('');
 
     const handleSend = (e: FormEvent) => {
@@ -21,7 +22,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     };
 
     return (
-      <FooterContainer>
+      <FooterContainer hasMessages={hasMessages}>
         <FormContainer onSubmit={handleSend}>
           <InputContainer>
             <InputField
