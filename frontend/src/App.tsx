@@ -1,5 +1,4 @@
 import { useState, useRef, type FormEvent } from 'react';
-import styled from 'styled-components';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/GlobalStyles';
 import { useZypherAgent } from './hooks/useZypherAgent';
@@ -66,7 +65,7 @@ function AppContent() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isWelcomeMode ? "O que você gostaria de aprender sobre React?" : "Digite sua pergunta..."}
+              placeholder={isWelcomeMode ? "What would you like to learn about React?" : "Type your question..."}
               disabled={!isConnected || (isWelcomeMode && isTransitioning)}
               autoFocus={isWelcomeMode}
             />
