@@ -9,11 +9,7 @@ import {
   WelcomeFeatures,
   FeatureItem,
   FeatureIcon,
-  FeatureText,
-  WelcomeInputContainer,
-  WelcomeInputField,
-  WelcomeInputButton,
-  WelcomeInputForm
+  FeatureText
 } from './WelcomeMessageStyle';
 
 interface WelcomeMessageProps {

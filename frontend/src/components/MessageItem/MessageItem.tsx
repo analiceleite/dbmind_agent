@@ -1,6 +1,6 @@
 import type { Message } from '../../hooks/useZypherAgent';
 import { MessageContainer, MessageHeader, MessageText, ThinkingIndicator } from './MessageItemStyle';
-import { MarkdownRenderer } from './MarkdownRenderer';
+import { MarkdownRenderer } from './MarkdownRenderer/MarkdownRenderer';
 
 interface MessageItemProps {
   message: Message;
