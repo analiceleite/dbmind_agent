@@ -44,11 +44,17 @@ export const MessageHeader = styled.strong`
   letter-spacing: 0.5px;
 `;
 
-export const MessageText = styled.p`
+export const MessageText = styled.div`
   margin: 0;
   line-height: 1.5;
   white-space: pre-wrap;
   color: ${props => props.theme.textPrimary};
+  
+  /* Override for plain text messages */
+  > :not(.markdown-container) {
+    margin: 0;
+    white-space: pre-wrap;
+  }
 `;
 
 export const ThinkingIndicator = styled.span`

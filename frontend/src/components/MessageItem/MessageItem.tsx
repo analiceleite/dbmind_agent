@@ -1,5 +1,6 @@
 import type { Message } from '../../hooks/useZypherAgent';
 import { MessageContainer, MessageHeader, MessageText, ThinkingIndicator } from './MessageItemStyle';
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface MessageItemProps {
   message: Message;
@@ -10,9 +11,18 @@ export const MessageItem = ({ message }: MessageItemProps) => {
     <MessageContainer $role={message.role}>
       <MessageHeader>{message.role === 'user' ? 'You' : 'React Agent'}:</MessageHeader>
       <MessageText>
-        {message.text}
-        {!message.isComplete && message.role === 'agent' && (
-          <ThinkingIndicator>●</ThinkingIndicator>
+        {message.role === 'agent' ? (
+          <MarkdownRenderer 
+            content={message.text} 
+            showLoadingIndicator={!message.isComplete} 
+          />
+        ) : (
+          <>
+            {message.text}
+            {!message.isComplete && (
+              <ThinkingIndicator>●</ThinkingIndicator>
+            )}
+          </>
         )}
       </MessageText>
     </MessageContainer>

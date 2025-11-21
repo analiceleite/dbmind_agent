@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import 'highlight.js/styles/github-dark.css';
 
 export const GlobalStyles = createGlobalStyle`
   * {

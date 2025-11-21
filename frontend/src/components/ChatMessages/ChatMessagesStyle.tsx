@@ -15,6 +15,7 @@ export const MessagesContainer = styled.main`
   flex: 1;
   overflow-y: auto;
   padding: 2rem;
+  padding-bottom: 6rem;
   background: ${props => props.theme.bgPrimary};
   color: ${props => props.theme.textPrimary};
   box-shadow: 0 4px 8px ${props => props.theme.shadowSecondary};
