@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import styled from 'styled-components';
+import { SendIcon } from './Icons';
 
 const FooterContainer = styled.footer`
   padding: 1rem 2rem;
