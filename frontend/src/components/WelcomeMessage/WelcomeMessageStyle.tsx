@@ -9,17 +9,6 @@ export const floatAnimation = keyframes`
   }
 `;
 
-export const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0px);
-  }
-`;
-
 export const staggerIn = keyframes`
   0% {
     opacity: 0;
@@ -38,7 +27,6 @@ export const WelcomeContainer = styled.div`
   transform: translate(-50%, -50%);
   text-align: center;
   z-index: 10;
-  animation: ${fadeInUp} 1s ease-out;
   max-width: 90vw;
   width: 100%;
 `;
