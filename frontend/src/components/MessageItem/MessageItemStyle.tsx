@@ -1,7 +1,6 @@
 import styled, { keyframes } from 'styled-components';
-import type { Message } from '../hooks/useZypherAgent';
 
-const thinkingPulse = keyframes`
+export const thinkingPulse = keyframes`
   0%, 100% {
     opacity: 0.3;
     transform: scale(1);
@@ -12,7 +11,7 @@ const thinkingPulse = keyframes`
   }
 `;
 
-const MessageContainer = styled.div<{ $role: 'user' | 'agent' }>`
+export const MessageContainer = styled.div<{ $role: 'user' | 'agent' }>`
   margin-bottom: 1.5rem;
   padding: 1.25rem;
   border-radius: 12px;
@@ -35,7 +34,7 @@ const MessageContainer = styled.div<{ $role: 'user' | 'agent' }>`
   `}
 `;
 
-const MessageHeader = styled.strong`
+export const MessageHeader = styled.strong`
   display: block;
   margin-bottom: 0.5rem;
   color: ${props => props.theme.textSecondary};
@@ -45,33 +44,15 @@ const MessageHeader = styled.strong`
   letter-spacing: 0.5px;
 `;
 
-const MessageText = styled.p`
+export const MessageText = styled.p`
   margin: 0;
   line-height: 1.5;
   white-space: pre-wrap;
   color: ${props => props.theme.textPrimary};
 `;
 
-const ThinkingIndicator = styled.span`
+export const ThinkingIndicator = styled.span`
   color: ${props => props.theme.textAccent};
   animation: ${thinkingPulse} 1.5s infinite;
   margin-left: 0.25rem;
 `;
-
-interface MessageItemProps {
-  message: Message;
-}
-
-export const MessageItem = ({ message }: MessageItemProps) => {
-  return (
-    <MessageContainer $role={message.role}>
-      <MessageHeader>{message.role === 'user' ? 'You' : 'React Agent'}:</MessageHeader>
-      <MessageText>
-        {message.text}
-        {!message.isComplete && message.role === 'agent' && (
-          <ThinkingIndicator>●</ThinkingIndicator>
-        )}
-      </MessageText>
-    </MessageContainer>
-  );
-};

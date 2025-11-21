@@ -1,10 +1,11 @@
+import { useRef } from 'react';
 import styled from 'styled-components';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/GlobalStyles';
 import { useZypherAgent } from './hooks/useZypherAgent';
-import { Header } from './components/Header';
-import { ChatMessages } from './components/ChatMessages';
-import { ChatInput } from './components/ChatInput';
+import { Header } from './components/Header/Header';
+import { ChatMessages } from './components/ChatMessages/ChatMessages';
+import { ChatInput } from './components/ChatInput/ChatInput';
 import logo from './assets/images/corespeed-logo-new.svg';
 
 const AppContainer = styled.div`
@@ -18,6 +19,11 @@ const AppContainer = styled.div`
 
 function AppContent() {
   const { messages, isConnected, isLoading, sendMessage, clearMessages } = useZypherAgent('ws://localhost:8000/ws');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleStartChat = () => {
+    inputRef.current?.focus();
+  };
 
   return (
     <AppContainer>
@@ -30,9 +36,11 @@ function AppContent() {
       <ChatMessages 
         messages={messages}
         isLoading={isLoading}
+        onStartChat={handleStartChat}
       />
       
       <ChatInput 
+        ref={inputRef}
         onSendMessage={sendMessage}
         isConnected={isConnected}
         isLoading={isLoading}

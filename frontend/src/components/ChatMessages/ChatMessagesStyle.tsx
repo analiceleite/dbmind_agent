@@ -1,9 +1,6 @@
-import { useRef, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import type { Message } from '../hooks/useZypherAgent';
-import { MessageItem } from './MessageItem';
 
-const thinkingPulse = keyframes`
+export const thinkingPulse = keyframes`
   0%, 100% {
     opacity: 0.3;
     transform: scale(1);
@@ -14,7 +11,7 @@ const thinkingPulse = keyframes`
   }
 `;
 
-const MessagesContainer = styled.main`
+export const MessagesContainer = styled.main`
   flex: 1;
   overflow-y: auto;
   padding: 2rem;
@@ -22,6 +19,7 @@ const MessagesContainer = styled.main`
   color: ${props => props.theme.textPrimary};
   box-shadow: 0 4px 8px ${props => props.theme.shadowSecondary};
   transition: all 0.3s ease;
+  position: relative;
 
   /* Custom scrollbar */
   &::-webkit-scrollbar {
@@ -48,7 +46,7 @@ const MessagesContainer = styled.main`
   scrollbar-color: ${props => props.theme.textSecondary} ${props => props.theme.scrollbarTrack};
 `;
 
-const LoadingMessage = styled.div`
+export const LoadingMessage = styled.div`
   margin-bottom: 1.5rem;
   padding: 1.25rem;
   border-radius: 12px;
@@ -62,7 +60,7 @@ const LoadingMessage = styled.div`
   box-shadow: 0 2px 8px ${props => props.theme.shadowSecondary};
 `;
 
-const LoadingHeader = styled.strong`
+export const LoadingHeader = styled.strong`
   display: block;
   margin-bottom: 0.5rem;
   color: ${props => props.theme.textSecondary};
@@ -72,48 +70,14 @@ const LoadingHeader = styled.strong`
   letter-spacing: 0.5px;
 `;
 
-const LoadingText = styled.p`
+export const LoadingText = styled.p`
   margin: 0;
   line-height: 1.5;
   white-space: pre-wrap;
   color: ${props => props.theme.textPrimary};
 `;
 
-const LoadingIndicator = styled.span`
+export const LoadingIndicator = styled.span`
   color: ${props => props.theme.textAccent};
   animation: ${thinkingPulse} 1.5s infinite;
 `;
-
-interface ChatMessagesProps {
-  messages: Message[];
-  isLoading: boolean;
-}
-
-export const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  return (
-    <MessagesContainer>
-      {messages.map((msg) => (
-        <MessageItem key={msg.id} message={msg} />
-      ))}
-      {isLoading && messages.length === 0 && (
-        <LoadingMessage>
-          <LoadingHeader>React Agent:</LoadingHeader>
-          <LoadingText>
-            <LoadingIndicator>●</LoadingIndicator>
-          </LoadingText>
-        </LoadingMessage>
-      )}
-      <div ref={messagesEndRef} />
-    </MessagesContainer>
-  );
-};

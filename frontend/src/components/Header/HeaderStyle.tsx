@@ -1,8 +1,6 @@
 import styled from 'styled-components';
-import { useTheme } from '../contexts/ThemeContext';
-import { SunIcon, MoonIcon, TrashIcon, ConnectedIcon, DisconnectedIcon } from './Icons';
 
-const HeaderContainer = styled.header`
+export const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -12,13 +10,13 @@ const HeaderContainer = styled.header`
   transition: all 0.3s ease;
 `;
 
-const Logo = styled.img<{ $isDark: boolean }>`
+export const Logo = styled.img<{ $isDark: boolean }>`
   height: 30px;
   width: 200px;
   filter: ${props => props.$isDark ? 'none' : 'brightness(0) saturate(100%)'};
 `;
 
-const Title = styled.h1`
+export const Title = styled.h1`
   flex: 1;
   text-align: center;
   font-size: 1.3rem;
@@ -26,18 +24,17 @@ const Title = styled.h1`
   font-family: "Nebula", sans-serif;
 `;
 
-const HeaderControls = styled.div`
+export const HeaderControls = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
 `;
 
-const ControlButton = styled.button`
+export const ControlButton = styled.button`
   background: transparent;
-  border: 1px solid ${props => props.theme.borderPrimary};
+  border: none;
   color: ${props => props.theme.textSecondary};
   padding: 0.6rem;
-  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -61,7 +58,7 @@ const ControlButton = styled.button`
   }
 `;
 
-const StatusIndicator = styled.div<{ $isConnected: boolean }>`
+export const StatusIndicator = styled.div<{ $isConnected: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -70,42 +67,6 @@ const StatusIndicator = styled.div<{ $isConnected: boolean }>`
   font-weight: 500;
   padding: 0.4rem 0.8rem;
   background: ${props => props.$isConnected ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'};
-  border-radius: 20px;
   border: 1px solid ${props => props.$isConnected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'};
   transition: all 0.3s ease;
 `;
-
-interface HeaderProps {
-  logo: string;
-  isConnected: boolean;
-  onClearMessages: () => void;
-}
-
-export const Header = ({ logo, isConnected, onClearMessages }: HeaderProps) => {
-  const { theme, toggleTheme } = useTheme();
-
-  return (
-    <HeaderContainer>
-      <Logo src={logo} alt="Logo" $isDark={theme === 'dark'} />
-      <Title>React Agent</Title>
-      <HeaderControls>
-        <ControlButton 
-          onClick={toggleTheme}
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        >
-          {theme === 'dark' ? <SunIcon width={18} height={18} /> : <MoonIcon width={18} height={18} />}
-        </ControlButton>
-        <ControlButton 
-          onClick={onClearMessages}
-          title="Clear chat history"
-        >
-          <TrashIcon width={18} height={18} />
-        </ControlButton>
-        <StatusIndicator $isConnected={isConnected}>
-          {isConnected ? <ConnectedIcon width={14} height={14} /> : <DisconnectedIcon width={14} height={14} />}
-          {isConnected ? 'Connected' : 'Disconnected'}
-        </StatusIndicator>
-      </HeaderControls>
-    </HeaderContainer>
-  );
-};
