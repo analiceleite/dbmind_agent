@@ -7,13 +7,46 @@ export interface Message {
   isComplete?: boolean;
 }
 
+const getInitialMessageId = () => {
+  const savedMessages = localStorage.getItem('chat-messages');
+  if (savedMessages) {
+    try {
+      const parsedMessages = JSON.parse(savedMessages);
+      return Array.isArray(parsedMessages) ? parsedMessages.length : 0;
+    } catch (error) {
+      return 0;
+    }
+  }
+  return 0;
+};
+
 export const useZypherAgent = (wsUrl: string) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    // Load messages from localStorage on initialization
+    const savedMessages = localStorage.getItem('chat-messages');
+    if (savedMessages) {
+      try {
+        const parsedMessages = JSON.parse(savedMessages);
+        return Array.isArray(parsedMessages) ? parsedMessages : [];
+      } catch (error) {
+        console.error('Failed to parse saved messages:', error);
+        return [];
+      }
+    }
+    return [];
+  });
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
-  const messageIdRef = useRef(0);
+  const messageIdRef = useRef(getInitialMessageId());
   const currentMessageIdRef = useRef<string | null>(null);
+
+  // Save messages to localStorage whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('chat-messages', JSON.stringify(messages));
+    }
+  }, [messages]);
 
   useEffect(() => {
     const connect = () => {
@@ -103,5 +136,11 @@ export const useZypherAgent = (wsUrl: string) => {
     wsRef.current.send(JSON.stringify({ type: 'task', task: text, model: 'llama3.2' }));
   };
 
-  return { messages, isConnected, isLoading, sendMessage };
+  const clearMessages = () => {
+    setMessages([]);
+    localStorage.removeItem('chat-messages');
+    messageIdRef.current = 0;
+  };
+
+  return { messages, isConnected, isLoading, sendMessage, clearMessages };
 };
