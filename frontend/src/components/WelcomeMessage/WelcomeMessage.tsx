@@ -1,40 +1,68 @@
+import { useState } from 'react';
 import { RocketIcon, BulbIcon, BookIcon, TargetIcon } from '../LucideIcons/LucideIcons';
-import { WelcomeContainer, WelcomeFeatures, WelcomeSubtitle, WelcomeTitle, FeatureIcon, FeatureItem, FeatureText, StartButton } from './WelcomeMessageStyle';
+import { WelcomeContainer, WelcomeContent, WelcomeFeatures, WelcomeSubtitle, WelcomeTitle, FeatureIcon, FeatureItem, FeatureText, StartButton } from './WelcomeMessageStyle';
+import { ParticlesEffect } from './ParticlesEffect';
 
 interface WelcomeMessageProps {
   onStartChat: () => void;
 }
 
 export const WelcomeMessage = ({ onStartChat }: WelcomeMessageProps) => {
+  const [particlesVisible, setParticlesVisible] = useState(true);
+
+  const handleStartChat = () => {
+    // Fade out particles before starting chat
+    setParticlesVisible(false);
+    
+    // Wait for fade out animation to complete before calling onStartChat
+    setTimeout(() => {
+      onStartChat();
+    }, 600); 
+  };
+
   return (
-    <WelcomeContainer>
-        <WelcomeTitle>Welcome to React Agent!</WelcomeTitle>
-        <WelcomeSubtitle>
-          Your intelligent assistant for learning React in an interactive and practical way.
-        </WelcomeSubtitle>
+    <>
+      <ParticlesEffect isVisible={particlesVisible} />
+      <WelcomeContainer>
+        <WelcomeContent>
+          <WelcomeTitle>React Agent</WelcomeTitle>
+          <WelcomeSubtitle>
+            Your intelligent assistant for mastering React with clear explanations, 
+            practical examples, and real-time answers.
+          </WelcomeSubtitle>
 
-        <WelcomeFeatures>
-          <FeatureItem>
-            <FeatureIcon><RocketIcon /></FeatureIcon>
-            <FeatureText>Real-time responses</FeatureText>
-          </FeatureItem>
-          <FeatureItem>
-            <FeatureIcon><BulbIcon /></FeatureIcon>
-            <FeatureText>Practical examples</FeatureText>
-          </FeatureItem>
-          <FeatureItem>
-            <FeatureIcon><BookIcon /></FeatureIcon>
-            <FeatureText>Detailed explanations</FeatureText>
-          </FeatureItem>
-          <FeatureItem>
-            <FeatureIcon><TargetIcon /></FeatureIcon>
-            <FeatureText>Focus on React</FeatureText>
-          </FeatureItem>
-        </WelcomeFeatures>
+          <WelcomeFeatures>
+            <FeatureItem>
+              <FeatureIcon className="feature-icon">
+                <RocketIcon />
+              </FeatureIcon>
+              <FeatureText>Instant responses</FeatureText>
+            </FeatureItem>
+            <FeatureItem>
+              <FeatureIcon className="feature-icon">
+                <BulbIcon />
+              </FeatureIcon>
+              <FeatureText>Practical examples</FeatureText>
+            </FeatureItem>
+            <FeatureItem>
+              <FeatureIcon className="feature-icon">
+                <BookIcon />
+              </FeatureIcon>
+              <FeatureText>Detailed explanations</FeatureText>
+            </FeatureItem>
+            <FeatureItem>
+              <FeatureIcon className="feature-icon">
+                <TargetIcon />
+              </FeatureIcon>
+              <FeatureText>Specialized focus</FeatureText>
+            </FeatureItem>
+          </WelcomeFeatures>
 
-        <StartButton onClick={onStartChat}>
-          Start Chat
-        </StartButton>
-    </WelcomeContainer>
+          <StartButton onClick={handleStartChat}>
+            Get started now
+          </StartButton>
+        </WelcomeContent>
+      </WelcomeContainer>
+    </>
   );
 };

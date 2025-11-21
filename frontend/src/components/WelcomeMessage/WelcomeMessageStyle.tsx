@@ -20,6 +20,88 @@ export const staggerIn = keyframes`
   }
 `;
 
+export const particleFloat = keyframes`
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+`;
+
+export const particleGlow = keyframes`
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
+`;
+
+export const ParticlesBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: ${props => props.theme.textAccent};
+    border-radius: 50%;
+    animation: ${particleFloat} 15s linear infinite;
+    transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &::before {
+    left: 10%;
+    animation-delay: -5s;
+    animation-duration: 20s;
+  }
+
+  &::after {
+    left: 90%;
+    animation-delay: -10s;
+    animation-duration: 25s;
+  }
+`;
+
+export const Particle = styled.div<{ delay: number; duration: number; left: number; size: number }>`
+  position: absolute;
+  width: ${props => props.size}px;
+  height: ${props => props.size}px;
+  background: ${props => props.theme.textSecondary};
+  border-radius: 50%;
+  left: ${props => props.left}%;
+  animation: ${particleFloat} ${props => props.duration}s linear infinite;
+  animation-delay: ${props => props.delay}s;
+  opacity: 0.4;
+  transition: opacity 0.5s ease-out;
+
+  &:nth-child(odd) {
+    background: ${props => props.theme.textAccent};
+  }
+`;
+
 export const WelcomeContainer = styled.div`
   position: absolute;
   top: 50%;
