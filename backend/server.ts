@@ -72,8 +72,9 @@ Deno.serve({ port: 8000 }, (req) => {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 model: 'llama3.2',
-                prompt: task, // Send question directly
-                stream: true  // Enable streaming
+                prompt: `You are a React expert teacher. Answer concisely: ${task}`,
+                stream: true,
+                system: 'You are a helpful React teacher. Focus only on React, hooks, components, and modern React patterns. Keep answers clear and practical.'
               })
             });
 
