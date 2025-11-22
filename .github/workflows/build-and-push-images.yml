@@ -53,7 +53,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build and push to GHCR
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.GHCR_PREFIX }}/zypher_agent-${{ matrix.service }}:beta
+            ${{ env.GHCR_PREFIX }}/zypher_agent-${{ matrix.service }}:${{ env.SHORT_SHA }}
+            ${{ env.GHCR_PREFIX }}/zypher_agent-${{ matrix.service }}:latest
+
+      - name: Build and push to Docker Hub
+        if: ${{ env.IMAGE_PREFIX != github.repository_owner }}
         uses: docker/build-push-action@v4
         with:
           context: ${{ matrix.context }}
@@ -64,9 +77,6 @@ jobs:
             ${{ env.IMAGE_PREFIX }}/zypher_agent-${{ matrix.service }}:beta
             ${{ env.IMAGE_PREFIX }}/zypher_agent-${{ matrix.service }}:${{ env.SHORT_SHA }}
             ${{ env.IMAGE_PREFIX }}/zypher_agent-${{ matrix.service }}:latest
-            ${{ env.GHCR_PREFIX }}/zypher_agent-${{ matrix.service }}:beta
-            ${{ env.GHCR_PREFIX }}/zypher_agent-${{ matrix.service }}:${{ env.SHORT_SHA }}
-            ${{ env.GHCR_PREFIX }}/zypher_agent-${{ matrix.service }}:latest
 
       - name: Image digest
         run: echo "Built ${{ env.IMAGE_PREFIX }}/zypher_agent-${{ matrix.service }}"
