@@ -77,8 +77,7 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
     const dataResult = await this.queryDatabase(prompt);
 
       if (!dataResult || !dataResult.rows) {
-      yield "I don't have that information in the database.";
-      // persist minimal history with no rows
+      yield "I'm sorry — I couldn't find any matching records in the database for that request.";
       try {
         await HistoryRepo.createHistory(prompt, selectedModel, null, 'no data', sessionId ?? null);
       } catch (e) {
@@ -140,7 +139,7 @@ Provide a direct answer based only on this data. Do not repeat the question, do 
       }
 
       if (!hasResponse) {
-        yield "Unable to process your request.";
+        yield "I'm sorry — I couldn't generate a response for that request right now.";
       }
 
       // Persist the completed query and answer
@@ -152,7 +151,7 @@ Provide a direct answer based only on this data. Do not repeat the question, do 
       }
     } catch (error) {
       console.error(`[ZypherProvider] Error:`, error);
-      yield "Error processing your request.";
+      yield "Apologies — an error occurred while processing your request.";
     }
 
     console.log(`[ZypherProvider] Completed in ${Date.now() - startTime}ms`);
