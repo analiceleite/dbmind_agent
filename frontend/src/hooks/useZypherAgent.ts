@@ -121,10 +121,12 @@ export const useZypherAgent = (wsUrl: string) => {
             
             if (currentMessageIdRef.current) {
               const remainingBuffer = chunkBufferRef.current;
+              const messageId = currentMessageIdRef.current; // Store ID before clearing
               chunkBufferRef.current = '';
               
+
               setMessages((prev) => prev.map((m) => 
-                m.id === currentMessageIdRef.current
+                m.id === messageId
                   ? { ...m, text: m.text + remainingBuffer, isComplete: true }
                   : m
               ));

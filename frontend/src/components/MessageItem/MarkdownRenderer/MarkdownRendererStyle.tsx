@@ -1,13 +1,11 @@
 import styled, { keyframes } from 'styled-components';
 
-export const thinkingPulse = keyframes`
-  0%, 100% {
-    opacity: 0.3;
-    transform: scale(1);
+const spinnerRotation = keyframes`
+  0% {
+    transform: rotate(0deg);
   }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
+  100% {
+    transform: rotate(360deg);
   }
 `;
 
@@ -141,43 +139,14 @@ export const MarkdownContainer = styled.div`
   }
 `;
 
-const loadingDots = keyframes`
-  0% {
-    content: '';
-  }
-  25% {
-    content: '●';
-  }
-  50% {
-    content: '●●';
-  }
-  75% {
-    content: '●●●';
-  }
-  100% {
-    content: '';
-  }
-`;
-
-export const LoadingIndicator = styled.span`
-  color: ${props => props.theme.textAccent};
-  margin-top: 1rem;
-  display: inline-flex;
-  align-items: center;
-  font-weight: bold;
-  
-  &::after {
-    content: '';
-    animation: ${loadingDots} 1.2s infinite;
-    width: 2rem;
-    text-align: left;
-  }
-  
-  &::before {
-    content: 'Thinking';
-    font-size: 0.875rem;
-    color: ${props => props.theme.textSecondary};
-    margin-right: 0.5rem;
-    opacity: 0.8;
-  }
+export const LoadingIndicator = styled.div`
+  margin-top: 0.5rem;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid ${props => props.theme.textSecondary};
+  border-top: 2px solid ${props => props.theme.textAccent};
+  border-radius: 50%;
+  animation: ${spinnerRotation} 1s linear infinite;
+  opacity: 0.8;
 `;
