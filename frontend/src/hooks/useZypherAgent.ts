@@ -39,6 +39,8 @@ export const useZypherAgent = (wsUrl: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const messageIdRef = useRef(getInitialMessageId());
+  const savedSession = (() => { try { return localStorage.getItem('chat-session-id'); } catch { return null; } })();
+  const sessionIdRef = useRef<string>(savedSession || `session_${Date.now()}`);
   const currentMessageIdRef = useRef<string | null>(null);
   const chunkBufferRef = useRef<string>('');
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -51,6 +53,8 @@ export const useZypherAgent = (wsUrl: string) => {
       localStorage.setItem('chat-messages', JSON.stringify(messages));
     }
   }, [messages]);
+
+  // sessionIdRef is persisted when startNewConversation or loadConversation are called
 
   useEffect(() => {
     const connect = () => {
@@ -194,7 +198,22 @@ export const useZypherAgent = (wsUrl: string) => {
     if (!wsRef.current) return;
     
     setMessages((prev) => [...prev, { id: `${++messageIdRef.current}`, role: 'user', text, isComplete: true }]);
-    wsRef.current.send(JSON.stringify({ type: 'task', task: text }));
+    wsRef.current.send(JSON.stringify({ type: 'task', task: text, session_id: sessionIdRef.current }));
+  };
+
+  const startNewConversation = (welcome?: string) => {
+    // generate new session id and clear messages
+    sessionIdRef.current = `session_${Date.now()}`;
+    setMessages([]);
+    localStorage.setItem('chat-messages', JSON.stringify([]));
+    localStorage.setItem('chat-session-id', sessionIdRef.current);
+    messageIdRef.current = 0;
+
+    // optional welcome message
+    if (welcome) {
+      const id = `${++messageIdRef.current}`;
+      setMessages([{ id, role: 'agent', text: welcome, isComplete: true }]);
+    }
   };
 
   const clearMessages = () => {
@@ -203,14 +222,18 @@ export const useZypherAgent = (wsUrl: string) => {
     messageIdRef.current = 0;
   };
 
-  const loadConversation = (msgs: Message[]) => {
+  const loadConversation = (msgs: Message[], sessionId?: string) => {
     // replace messages with loaded conversation
     setMessages(msgs);
     // persist
     localStorage.setItem('chat-messages', JSON.stringify(msgs));
     // reset id ref so next messages continue the sequence
     messageIdRef.current = msgs.length ? parseInt(msgs[msgs.length - 1].id, 10) || messageIdRef.current : messageIdRef.current;
+    if (sessionId) {
+      sessionIdRef.current = sessionId;
+      localStorage.setItem('chat-session-id', sessionIdRef.current);
+    }
   };
 
-  return { messages, isConnected, isLoading, sendMessage, clearMessages, loadConversation };
+  return { messages, isConnected, isLoading, sendMessage, clearMessages, loadConversation, startNewConversation };
 };

@@ -29,7 +29,7 @@ Database Schema:
   /**
    * Generates SQL and executes the query in one step
    */
-  private async queryDatabase(prompt: string): Promise<{ rows: any[] | null; sql?: string | null } | null> {
+  private async queryDatabase(prompt: string): Promise<{ rows: unknown[] | null; sql?: string | null } | null> {
     const sqlTask = `You are an expert SQL query generator. Based on the following database schema:
 
 ${this.dbSchema}
@@ -68,7 +68,7 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
     }
   }
 
-  async* streamResponse(prompt: string, model?: string): AsyncIterable<string> {
+  async* streamResponse(prompt: string, model?: string, _system?: string, sessionId?: string): AsyncIterable<string> {
     const startTime = Date.now();
     const selectedModel = model || "claude-3-5-haiku-20241022";
 
@@ -76,11 +76,11 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
 
     const dataResult = await this.queryDatabase(prompt);
 
-    if (!dataResult || !dataResult.rows) {
+      if (!dataResult || !dataResult.rows) {
       yield "I don't have that information in the database.";
       // persist minimal history with no rows
       try {
-        await HistoryRepo.createHistory(prompt, selectedModel, null, 'no data');
+        await HistoryRepo.createHistory(prompt, selectedModel, null, 'no data', sessionId ?? null);
       } catch (e) {
         console.error('[ZypherProvider] failed to persist empty query history', e);
       }
@@ -93,20 +93,23 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
     const limitedData = dataResult.rows.length > 10 ? dataResult.rows.slice(0, 10) : dataResult.rows;
 
     // Check if it's a scalar result (e.g., COUNT, SUM)
-    const isScalar = limitedData.length === 1 && Object.keys(limitedData[0]).length === 1;
+    const isScalar = limitedData.length === 1 && typeof limitedData[0] === 'object' && Object.keys(limitedData[0] as Record<string, unknown>).length === 1;
 
     let dataText: string;
     if (isScalar) {
       // For scalar results, just use the value
-      dataText = Object.values(limitedData[0])[0]?.toString() || '0';
+      const obj = limitedData[0] as Record<string, unknown>;
+      const val = Object.values(obj)[0];
+      dataText = val !== undefined && val !== null ? String(val) : '0';
     } else {
       // Format data as text
-      dataText = limitedData.map(row => {
+      dataText = (limitedData as Record<string, unknown>[]).map(row => {
         // Try to format nicely, fallback to JSON if columns don't match
-        if (row.name && row.category && row.price !== undefined) {
-          return `${row.name} (${row.category}, $${row.price})`;
+        const r = row as Record<string, unknown>;
+        if (typeof r.name === 'string' && typeof r.category === 'string' && r.price !== undefined) {
+          return `${r.name} (${r.category}, $${r.price})`;
         } else {
-          return Object.entries(row).map(([k, v]) => `${k}: ${v}`).join(', ');
+          return Object.entries(r).map(([k, v]) => `${k}: ${v}`).join(', ');
         }
       }).join(', ');
     }
@@ -143,7 +146,7 @@ Provide a direct answer based only on this data. Do not repeat the question, do 
       // Persist the completed query and answer
       try {
         const sql = dataResult.sql ?? null;
-        await HistoryRepo.createHistory(prompt, selectedModel, sql, fullAnswer);
+        await HistoryRepo.createHistory(prompt, selectedModel, sql, fullAnswer, sessionId ?? null);
       } catch (e) {
         console.error('[ZypherProvider] failed to persist query history', e);
       }

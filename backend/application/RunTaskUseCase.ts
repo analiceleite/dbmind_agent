@@ -9,7 +9,7 @@ export class RunTaskUseCase {
     this.fallbackProvider = fallbackProvider;
   }
 
-  async* execute(task: string, model?: string): AsyncIterable<string> {
+  async* execute(task: string, model?: string, sessionId?: string): AsyncIterable<string> {
     const startTime = Date.now();
     console.log(`[UseCase] Executing task with ${this.primaryProvider.constructor.name}`);
     
@@ -17,7 +17,7 @@ export class RunTaskUseCase {
       let hasYielded = false;
       let chunkCount = 0;
       
-      for await (const chunk of this.primaryProvider.streamResponse(task, model)) {
+      for await (const chunk of this.primaryProvider.streamResponse(task, model, undefined, sessionId)) {
         chunkCount++;
         if (!hasYielded) {
           console.log(`[UseCase] First chunk received in ${Date.now() - startTime}ms`);
@@ -39,7 +39,7 @@ export class RunTaskUseCase {
       if (this.fallbackProvider) {
         console.log(`[UseCase] Switching to fallback provider: ${this.fallbackProvider.constructor.name}`);
         try {
-          for await (const chunk of this.fallbackProvider.streamResponse(task, model)) {
+          for await (const chunk of this.fallbackProvider.streamResponse(task, model, undefined, sessionId)) {
             yield chunk;
           }
         } catch (fallbackError) {

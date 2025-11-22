@@ -23,7 +23,7 @@ export class WebSocketHandler {
         const data = JSON.parse(event.data);
         
         if (data.type === "task") {
-          const { task, model } = data;
+          const { task, model, session_id } = data;
           console.log(`[WebSocket] Received task: "${task.substring(0, 50)}..." with model: ${model || 'default'}`);
           const startTime = Date.now();
           
@@ -35,7 +35,7 @@ export class WebSocketHandler {
             let hasStreamed = false;
             let chunkCount = 0;
             
-            for await (const chunk of this.useCase.execute(task, model)) {
+            for await (const chunk of this.useCase.execute(task, model, session_id)) {
               hasStreamed = true;
               chunkCount++;
               

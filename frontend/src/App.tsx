@@ -10,7 +10,7 @@ import logo from './assets/images/corespeed-logo-new.svg';
 import { AppContainer, ResponsiveInputButton, ResponsiveInputContainer, ResponsiveInputField, ResponsiveInputForm, ResponsiveInputWrapper } from './AppStyle';
 
 function AppContent() {
-  const { messages, isConnected, isLoading, sendMessage, clearMessages, loadConversation } = useZypherAgent('ws://localhost:8000/ws');
+  const { messages, isConnected, isLoading, sendMessage, clearMessages, loadConversation, startNewConversation } = useZypherAgent('ws://localhost:8000/ws');
   const [input, setInput] = useState('');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -51,7 +51,7 @@ function AppContent() {
         { id: `${base}`, role: 'user' as const, text: row.question, isComplete: true },
         { id: `${base + 1}`, role: 'agent' as const, text: row.answer ?? '', isComplete: true },
       ];
-      loadConversation(msgs);
+      loadConversation(msgs, row.session_id);
       setShowHistory(false);
     } catch (err) {
       console.error(err);
@@ -87,6 +87,7 @@ function AppContent() {
         isConnected={isConnected}
         onClearMessages={clearMessages}
         onOpenHistory={openHistory}
+        onNewConversation={() => startNewConversation('New conversation started — how can I help?')}
       />
       
       <ChatMessages 

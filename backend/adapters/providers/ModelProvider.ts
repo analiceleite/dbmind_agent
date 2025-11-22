@@ -1,6 +1,6 @@
 // Common interface for AI model providers
 export interface ModelProvider {
-  streamResponse(prompt: string, model?: string, system?: string): AsyncIterable<string>;
+  streamResponse(prompt: string, model?: string, system?: string, sessionId?: string): AsyncIterable<string>;
 }
 
 export interface ModelResponse {

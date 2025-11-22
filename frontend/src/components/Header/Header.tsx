@@ -1,5 +1,5 @@
 import { useTheme } from '../../contexts/ThemeContext';
-import { SunIcon, MoonIcon, TrashIcon, ConnectedIcon, DisconnectedIcon, BookIcon } from '../LucideIcons/LucideIcons';
+import { SunIcon, MoonIcon, TrashIcon, ConnectedIcon, DisconnectedIcon, BookIcon, RocketIcon } from '../LucideIcons/LucideIcons';
 import { HeaderContainer, Logo, Title, HeaderControls, ControlButton, StatusIndicator } from './HeaderStyle';
 
 interface HeaderProps {
@@ -7,9 +7,10 @@ interface HeaderProps {
   isConnected: boolean;
   onClearMessages: () => void;
   onOpenHistory?: () => void;
+  onNewConversation?: () => void;
 }
 
-export const Header = ({ logo, isConnected, onClearMessages, onOpenHistory }: HeaderProps) => {
+export const Header = ({ logo, isConnected, onClearMessages, onOpenHistory, onNewConversation }: HeaderProps) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -28,6 +29,12 @@ export const Header = ({ logo, isConnected, onClearMessages, onOpenHistory }: He
           title="Clear chat history"
         >
           <TrashIcon size={18} />
+        </ControlButton>
+        <ControlButton
+          onClick={() => onNewConversation && onNewConversation()}
+          title="New conversation"
+        >
+          <RocketIcon size={18} />
         </ControlButton>
         <ControlButton
           onClick={() => onOpenHistory && onOpenHistory()}
