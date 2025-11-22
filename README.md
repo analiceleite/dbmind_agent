@@ -4,6 +4,10 @@ An intelligent database assistant that dynamically generates SQL queries and pro
 
 ## 🏗️ Architecture
 
+The frontend and the backend are running locally on my machine, but the database and ollama are running on a cloud virtual machine with 128GB of memory.
+
+# INSERT PRINTSCREEN
+
 ```
 ┌─────────────────────────────────────────────────┐
 │  React Frontend (Port 5173)                     │
