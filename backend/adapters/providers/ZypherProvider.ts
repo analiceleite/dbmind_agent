@@ -1,58 +1,122 @@
 import type { ModelProvider } from './ModelProvider.ts';
 import { ZypherAgent } from "@corespeed/zypher";
+import { pool } from '../database/DatabaseConnection.ts';
 
 export class ZypherProvider implements ModelProvider {
   private agent: ZypherAgent;
+  private dbSchema: string;
 
   constructor(agent: ZypherAgent) {
     this.agent = agent;
+    this.dbSchema = this.getDatabaseSchema();
+  }
+
+  private getDatabaseSchema(): string {
+    return `
+Database Schema:
+- budgets: id, department, year, amount
+- debts: id, creditor, amount, due_date, paid
+- customers: id, name, email, phone, city
+- products: id, name, category, price
+- employees: id, name, position, salary
+- sales: id, customer_id, product_id, employee_id, quantity, sale_date
+    `.trim();
+  }
+
+  /**
+   * Generates SQL and executes the query in one step
+   */
+  private async queryDatabase(prompt: string): Promise<any[] | null> {
+    const sqlTask = `${this.dbSchema}
+
+Generate ONLY a SQL SELECT query to answer: ${prompt}
+Return only the SQL, no explanations.`;
+
+    const sqlEvent$ = this.agent.runTask(sqlTask, "phi3:mini");
+    const { eachValueFrom } = await import("rxjs-for-await");
+
+    let sqlQuery = "";
+    for await (const event of eachValueFrom(sqlEvent$)) {
+      if (event.type === 'text' && 'content' in event && event.content) {
+        sqlQuery += event.content;
+      }
+    }
+
+    // Clean up SQL
+    sqlQuery = sqlQuery.trim()
+      .replace(/^```sql\s*/, '')
+      .replace(/\s*```$/, '')
+      .replace(/^```\s*/, '')
+      .trim();
+
+    if (!sqlQuery.toUpperCase().startsWith('SELECT')) {
+      return null;
+    }
+
+    console.log(`[ZypherProvider] SQL: ${sqlQuery}`);
+
+    // Execute query
+    const client = await pool.connect();
+    try {
+      const result = await client.queryObject(sqlQuery);
+      return result.rows.length > 0 ? result.rows : null;
+    } catch (error) {
+      console.error("[ZypherProvider] Query error:", error);
+      return null;
+    } finally {
+      client.release();
+    }
   }
 
   async* streamResponse(prompt: string, model?: string): AsyncIterable<string> {
-    console.log(`[ZypherProvider] Starting Zypher task with model: ${model || "phi3:mini"}`);
     const startTime = Date.now();
+    const selectedModel = model || "phi3:mini";
+
+    console.log(`[ZypherProvider] Processing: "${prompt}"`);
+
+    // 1. Fetch data from database
+    const data = await this.queryDatabase(prompt);
     
-    // Use Zypher Agent to run the task with streaming (optimized model)
-    const event$ = this.agent.runTask(prompt, model || "phi3:mini");
+    if (!data) {
+      yield "I don't have that information in the database.";
+      return;
+    }
+
+    console.log(`[ZypherProvider] Data retrieved in ${Date.now() - startTime}ms`);
+
+    // 2. Build direct and concise prompt
+    const finalPrompt = `Data: ${JSON.stringify(data)}
+
+Question: ${prompt}
+
+Answer directly and objectively using only this data.`;
+
+    // 3. Stream response
+    const event$ = this.agent.runTask(finalPrompt, selectedModel);
     const { eachValueFrom } = await import("rxjs-for-await");
-    
-    let hasYielded = false;
-    let chunkCount = 0;
-    
+
+    let hasResponse = false;
     try {
       for await (const event of eachValueFrom(event$)) {
-        // Handle text streaming events - this is where the actual content comes
         if (event.type === 'text' && 'content' in event && event.content) {
-          if (!hasYielded) {
-            console.log(`[ZypherProvider] First chunk received in ${Date.now() - startTime}ms`);
-            hasYielded = true;
+          if (!hasResponse) {
+            console.log(`[ZypherProvider] First response in ${Date.now() - startTime}ms`);
+            hasResponse = true;
           }
-          
-          chunkCount++;
-          // Yield the content directly from Zypher (optimized for speed)
           yield event.content;
-        }
-        
-        // Handle cancellation
-        else if (event.type === 'cancelled') {
-          console.log(`[ZypherProvider] Task was cancelled`);
+        } else if (event.type === 'cancelled') {
           break;
         }
-        // Note: Zypher doesn't send 'complete' events - the stream just ends
       }
       
-      // When we exit the loop, it means the stream has ended naturally
-      console.log(`[ZypherProvider] Stream completed naturally - ${chunkCount} chunks in ${Date.now() - startTime}ms`);
-      
-      if (!hasYielded) {
-        throw new Error('No response received from Zypher Agent');
+      if (!hasResponse) {
+        yield "Unable to process your request.";
       }
-      
-      // Stream has ended, this generator will naturally complete
-      
     } catch (error) {
-      console.error(`[ZypherProvider] Error after ${Date.now() - startTime}ms:`, error);
-      throw error;
+      console.error(`[ZypherProvider] Error:`, error);
+      yield "Error processing your request.";
     }
+
+    console.log(`[ZypherProvider] Completed in ${Date.now() - startTime}ms`);
   }
 }

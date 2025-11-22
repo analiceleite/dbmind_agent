@@ -24,7 +24,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - ./fake_company.sql:/docker-entrypoint-initdb.d/fake_company.sql
     restart: unless-stopped
 
 volumes:
