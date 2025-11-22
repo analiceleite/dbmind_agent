@@ -24,7 +24,7 @@ function loadConfig(): AppConfig {
     },
     cors: {
       origin: "*",
-      methods: "GET, POST, OPTIONS",
+      methods: "GET, POST, PUT, DELETE, OPTIONS",
       headers: "Content-Type",
     },
   };

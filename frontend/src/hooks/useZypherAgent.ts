@@ -203,5 +203,14 @@ export const useZypherAgent = (wsUrl: string) => {
     messageIdRef.current = 0;
   };
 
-  return { messages, isConnected, isLoading, sendMessage, clearMessages };
+  const loadConversation = (msgs: Message[]) => {
+    // replace messages with loaded conversation
+    setMessages(msgs);
+    // persist
+    localStorage.setItem('chat-messages', JSON.stringify(msgs));
+    // reset id ref so next messages continue the sequence
+    messageIdRef.current = msgs.length ? parseInt(msgs[msgs.length - 1].id, 10) || messageIdRef.current : messageIdRef.current;
+  };
+
+  return { messages, isConnected, isLoading, sendMessage, clearMessages, loadConversation };
 };

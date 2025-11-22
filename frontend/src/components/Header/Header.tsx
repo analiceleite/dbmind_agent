@@ -1,14 +1,15 @@
 import { useTheme } from '../../contexts/ThemeContext';
-import { SunIcon, MoonIcon, TrashIcon, ConnectedIcon, DisconnectedIcon } from '../LucideIcons/LucideIcons';
+import { SunIcon, MoonIcon, TrashIcon, ConnectedIcon, DisconnectedIcon, BookIcon } from '../LucideIcons/LucideIcons';
 import { HeaderContainer, Logo, Title, HeaderControls, ControlButton, StatusIndicator } from './HeaderStyle';
 
 interface HeaderProps {
   logo: string;
   isConnected: boolean;
   onClearMessages: () => void;
+  onOpenHistory?: () => void;
 }
 
-export const Header = ({ logo, isConnected, onClearMessages }: HeaderProps) => {
+export const Header = ({ logo, isConnected, onClearMessages, onOpenHistory }: HeaderProps) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -27,6 +28,12 @@ export const Header = ({ logo, isConnected, onClearMessages }: HeaderProps) => {
           title="Clear chat history"
         >
           <TrashIcon size={18} />
+        </ControlButton>
+        <ControlButton
+          onClick={() => onOpenHistory && onOpenHistory()}
+          title="History"
+        >
+          <BookIcon size={18} />
         </ControlButton>
         <StatusIndicator $isConnected={isConnected}>
           {isConnected ? <ConnectedIcon size={14} /> : <DisconnectedIcon size={14} />}

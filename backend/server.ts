@@ -58,6 +58,30 @@ Deno.serve({ port: config.port }, (req) => {
     return httpHandler.handleHealth();
   }
 
+  // History endpoints
+  if (url.pathname === "/history" && req.method === 'GET') {
+    return httpHandler.handleHistoryList();
+  }
+
+  if (url.pathname.startsWith('/history/') && req.method === 'GET') {
+    const id = url.pathname.split('/')[2];
+    return httpHandler.handleHistoryGet(id);
+  }
+
+  if (url.pathname.startsWith('/history/') && req.method === 'PUT') {
+    const id = url.pathname.split('/')[2];
+    return httpHandler.handleHistoryUpdate(id, req);
+  }
+
+  if (url.pathname.startsWith('/history/') && req.method === 'DELETE') {
+    const id = url.pathname.split('/')[2];
+    return httpHandler.handleHistoryDelete(id);
+  }
+
+  if (url.pathname === '/history' && req.method === 'POST') {
+    return httpHandler.handleHistoryCreate(req);
+  }
+
   // Default response
   return httpHandler.handleDefault();
 });

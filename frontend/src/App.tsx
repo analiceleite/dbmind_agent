@@ -3,18 +3,60 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/GlobalStyles';
 import { useZypherAgent } from './hooks/useZypherAgent';
 import { Header } from './components/Header/Header';
+import History from './components/History/History';
 import { ChatMessages } from './components/ChatMessages/ChatMessages';
 import { SendIcon } from './components/LucideIcons/LucideIcons';
 import logo from './assets/images/corespeed-logo-new.svg';
 import { AppContainer, ResponsiveInputButton, ResponsiveInputContainer, ResponsiveInputField, ResponsiveInputForm, ResponsiveInputWrapper } from './AppStyle';
 
 function AppContent() {
-  const { messages, isConnected, isLoading, sendMessage, clearMessages } = useZypherAgent('ws://localhost:8000/ws');
+  const { messages, isConnected, isLoading, sendMessage, clearMessages, loadConversation } = useZypherAgent('ws://localhost:8000/ws');
   const [input, setInput] = useState('');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
   const isWelcomeMode = messages.length === 0 && !isLoading;
+
+  // History panel
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyItems, setHistoryItems] = useState<any[]>([]);
+
+  const openHistory = async () => {
+    setShowHistory(true);
+    await reloadHistory();
+  };
+
+  const reloadHistory = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/history');
+      if (res.ok) {
+        const items = await res.json();
+        setHistoryItems(items);
+      } else {
+        console.error('Failed to reload history', res.status);
+      }
+    } catch (err) {
+      console.error('Failed to load history', err);
+    }
+  };
+
+  const selectHistory = async (id: number) => {
+    try {
+      const res = await fetch(`http://localhost:8000/history/${id}`);
+      if (!res.ok) return;
+      const row = await res.json();
+      // build messages to load into conversation
+      const base = Date.now();
+      const msgs = [
+        { id: `${base}`, role: 'user' as const, text: row.question, isComplete: true },
+        { id: `${base + 1}`, role: 'agent' as const, text: row.answer ?? '', isComplete: true },
+      ];
+      loadConversation(msgs);
+      setShowHistory(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleStartChat = (message: string) => {
     sendMessage(message);
@@ -44,6 +86,7 @@ function AppContent() {
         logo={logo}
         isConnected={isConnected}
         onClearMessages={clearMessages}
+        onOpenHistory={openHistory}
       />
       
       <ChatMessages 
@@ -53,6 +96,10 @@ function AppContent() {
         isConnected={isConnected}
         isTransitioning={isTransitioning}
       />
+
+      {showHistory && (
+        <History items={historyItems} onClose={() => setShowHistory(false)} onSelect={selectHistory} onReload={reloadHistory} />
+      )}
       
       <ResponsiveInputContainer 
         $isWelcome={isWelcomeMode}

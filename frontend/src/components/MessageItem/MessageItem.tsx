@@ -9,7 +9,7 @@ interface MessageItemProps {
 export const MessageItem = ({ message }: MessageItemProps) => {
   return (
     <MessageContainer $role={message.role}>
-      <MessageHeader>{message.role === 'user' ? 'You' : 'React Agent'}:</MessageHeader>
+      <MessageHeader>{message.role === 'user' ? 'You' : 'DBMind Agent'}:</MessageHeader>
       <MessageText>
         {message.role === 'agent' ? (
           <MarkdownRenderer 

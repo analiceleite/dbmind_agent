@@ -21,30 +21,6 @@ export const MessagesContainer = styled.main`
   box-shadow: 0 4px 8px ${props => props.theme.shadowSecondary};
   transition: all 0.3s ease;
   position: relative;
-
-  /* Custom scrollbar */
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: ${props => props.theme.scrollbarTrack};
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: ${props => props.theme.scrollbarThumb};
-    border-radius: 4px;
-    transition: background 0.3s ease;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: ${props => props.theme.scrollbarThumbHover};
-  }
-
-  /* Firefox scrollbar */
-  scrollbar-width: thin;
-  scrollbar-color: ${props => props.theme.textSecondary} ${props => props.theme.scrollbarTrack};
 `;
 
 export const LoadingMessage = styled.div`

@@ -1,6 +1,7 @@
 import type { ModelProvider } from './ModelProvider.ts';
 import { ZypherAgent } from "@corespeed/zypher";
 import { pool } from '../database/DatabaseConnection.ts';
+import * as HistoryRepo from '../database/HistoryRepository.ts';
 
 export class ZypherProvider implements ModelProvider {
   private agent: ZypherAgent;
@@ -28,7 +29,7 @@ Database Schema:
   /**
    * Generates SQL and executes the query in one step
    */
-  private async queryDatabase(prompt: string): Promise<any[] | null> {
+  private async queryDatabase(prompt: string): Promise<{ rows: any[] | null; sql?: string | null } | null> {
     const sqlTask = `You are an expert SQL query generator. Based on the following database schema:
 
 ${this.dbSchema}
@@ -58,7 +59,7 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
     const client = await pool.connect();
     try {
       const result = await client.queryObject(sqlQuery);
-      return result.rows.length > 0 ? result.rows : null;
+      return { rows: result.rows.length > 0 ? result.rows : null, sql: sqlQuery };
     } catch (error) {
       console.error("[ZypherProvider] Query error:", error);
       return null;
@@ -73,18 +74,23 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
 
     console.log(`[ZypherProvider] Processing: "${prompt}"`);
 
-    // 1. Fetch data from database
-    const data = await this.queryDatabase(prompt);
+    const dataResult = await this.queryDatabase(prompt);
 
-    if (!data) {
+    if (!dataResult || !dataResult.rows) {
       yield "I don't have that information in the database.";
+      // persist minimal history with no rows
+      try {
+        await HistoryRepo.createHistory(prompt, selectedModel, null, 'no data');
+      } catch (e) {
+        console.error('[ZypherProvider] failed to persist empty query history', e);
+      }
       return;
     }
 
     console.log(`[ZypherProvider] Data retrieved in ${Date.now() - startTime}ms`);
 
     // Limit data to prevent memory issues
-    const limitedData = data.length > 10 ? data.slice(0, 10) : data;
+    const limitedData = dataResult.rows.length > 10 ? dataResult.rows.slice(0, 10) : dataResult.rows;
 
     // Check if it's a scalar result (e.g., COUNT, SUM)
     const isScalar = limitedData.length === 1 && Object.keys(limitedData[0]).length === 1;
@@ -115,9 +121,11 @@ Provide a direct answer based only on this data. Do not repeat the question, do 
     const { eachValueFrom } = await import("rxjs-for-await");
 
     let hasResponse = false;
+    let fullAnswer = '';
     try {
       for await (const event of eachValueFrom(event$)) {
         if (event.type === 'text' && 'content' in event && event.content) {
+          fullAnswer += event.content;
           if (!hasResponse) {
             console.log(`[ZypherProvider] First response in ${Date.now() - startTime}ms`);
             hasResponse = true;
@@ -130,6 +138,14 @@ Provide a direct answer based only on this data. Do not repeat the question, do 
 
       if (!hasResponse) {
         yield "Unable to process your request.";
+      }
+
+      // Persist the completed query and answer
+      try {
+        const sql = dataResult.sql ?? null;
+        await HistoryRepo.createHistory(prompt, selectedModel, sql, fullAnswer);
+      } catch (e) {
+        console.error('[ZypherProvider] failed to persist query history', e);
       }
     } catch (error) {
       console.error(`[ZypherProvider] Error:`, error);

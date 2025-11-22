@@ -162,3 +162,43 @@ INSERT INTO invoices (supplier_id, amount, issue_date, due_date, paid) VALUES
 (3, 30000.00, '2025-10-20', '2025-11-20', TRUE),
 (4, 10000.00, '2025-11-01', '2025-12-01', FALSE),
 (1, 18000.00, '2025-11-05', '2025-12-05', FALSE);
+
+-- Table for query history (chat queries & agent results)
+CREATE TABLE query_history (
+    id SERIAL PRIMARY KEY,
+    session_id VARCHAR(128) DEFAULT 'default',
+    question TEXT NOT NULL,
+    model VARCHAR(128),
+    sql_query TEXT,
+    answer TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Seed some example history rows
+INSERT INTO query_history (session_id, question, model, sql_query, answer) VALUES
+('dev-session', 'What products do we have and their prices?', 'gpt-5', 'SELECT id, name, price FROM products ORDER BY name;', '1|Notebook Pro|2499.00; 2|Smartphone X|1199.00; 3|Gaming Chair|399.00; 4|4K Monitor|799.00'),
+('analytics-session', 'What is the best-selling product this month?', 'gpt-4o', 'SELECT p.name, SUM(pc.quantity) AS sold FROM purchases p JOIN purchase_clothings pc ON p.id = pc.purchase_id JOIN products pr ON pc.product_id = pr.id WHERE date_trunc(''month'', p.created_at) = date_trunc(''month'', current_date) GROUP BY p.name ORDER BY sold DESC LIMIT 1;', 'Smartphone X'),
+('finance-session', 'Total revenue in November?', 'gpt-5-mini', 'SELECT SUM(total_amount) FROM purchases WHERE EXTRACT(MONTH FROM created_at) = 11 AND EXTRACT(YEAR FROM created_at) = 2025;', '128450.75'),
+('reporting-session', 'Top 3 most expensive products?', 'gpt-4o-mini', 'SELECT id, name, price FROM products ORDER BY price DESC LIMIT 3;', '1|Notebook Pro|2499.00; 5|Workstation Ultra|2199.00; 12|Pro Camera|1999.00'),
+('sales-session', 'How many units of Notebook Pro were sold?', 'gpt-5', 'SELECT SUM(quantity) FROM purchase_items WHERE product_name = ''Notebook Pro'' OR product_id = (SELECT id FROM products WHERE name = ''Notebook Pro'');', '34'),
+('crm-session', 'How many customers registered?', 'gpt-4o', 'SELECT COUNT(*) FROM customers;', '1,234'),
+('crm-session', 'Which customers are from New York?', 'claude-3-5-sonnet-20240620', 'SELECT id, name, city FROM customers WHERE city = ''New York'';', '23 rows (example: 101|John Doe|New York; 203|Veronica Smith|New York)'),
+('crm-session', 'Who are the customers who spent the most?', 'gpt-5-mini', 'SELECT c.id, c.name, SUM(p.total_amount) AS total_spent FROM customers c JOIN purchases p ON c.id = p.customer_id GROUP BY c.id, c.name ORDER BY total_spent DESC LIMIT 10;', '201|Acme Corp|45200.00; 145|Bright Co|38950.00; 87|Maria Lopez|21780.50'),
+('crm-session', 'List customers registered in last 6 months', 'gpt-4o', 'SELECT id, name, created_at FROM customers WHERE created_at >= (current_date - INTERVAL ''6 months'') ORDER BY created_at DESC;', '12 rows (most recent example: 312|Daniela Cruz|2025-10-04; 311|Lucas Perez|2025-09-21)'),
+('hr-session', 'How many employees in Sales?', 'claude-3-5-sonnet-20240620', 'SELECT COUNT(*) FROM employees WHERE department = ''Sales'';', '4'),
+('hr-session', 'What is the average salary of employees?', 'gpt-5', 'SELECT ROUND(AVG(salary),2) FROM employees;', '5234.67'),
+('hr-session', 'Who is the most senior employee?', 'gpt-4o', 'SELECT id, name, hire_date FROM employees ORDER BY hire_date ASC LIMIT 1;', '12|Fernando Silva|2010-03-15'),
+('hr-session', 'List managers and their salaries', 'gpt-5-mini', 'SELECT id, name, title, salary FROM employees WHERE title ILIKE ''%manager%'' ORDER BY name;', '45|Fernanda Lee|Sales Manager|7200.00; 51|Carlos Mendes|Finance Manager|8100.00'),
+('budget-session', 'Total company budget for 2025?', 'gpt-4o-mini', 'SELECT SUM(amount) FROM budgets WHERE fiscal_year = 2025;', '2,500,000.00'),
+('finance-session', 'How much do we owe in unpaid debts?', 'claude-3-5-haiku-20241022', 'SELECT SUM(amount) FROM liabilities WHERE paid = FALSE;', '78,320.00'),
+('finance-session', 'What are our largest expenses with suppliers?', 'gpt-5', 'SELECT supplier_id, s.name, SUM(i.amount) AS total_spent FROM invoices i JOIN suppliers s ON i.supplier_id = s.id WHERE i.type = ''expense'' GROUP BY supplier_id, s.name ORDER BY total_spent DESC LIMIT 5;', '301|Global Supply Co|420,000.00; 312|ElectroMart|189,500.00'),
+('ops-session', 'Which department has the largest budget?', 'gpt-4o', 'SELECT department, SUM(amount) FROM budgets WHERE fiscal_year = 2025 GROUP BY department ORDER BY SUM(amount) DESC LIMIT 1;', 'R&D|1,200,000.00'),
+('inventory-session', 'Which products have low stock (< 20)?', 'gpt-5-mini', 'SELECT id, name, stock FROM products WHERE stock < 20 ORDER BY stock ASC;', '7|Wireless Earbuds|3; 13|Gaming Chair|12; 21|HD Webcam|19'),
+('procurement-session', 'Who are suppliers and their cities?', 'gpt-4o-mini', 'SELECT id, name, city FROM suppliers ORDER BY name;', '301|Global Supply Co|Shanghai; 312|ElectroMart|New York; 333|HomeTech|São Paulo'),
+('procurement-session', 'How much spent with suppliers this year?', 'gpt-5', 'SELECT SUM(amount) FROM invoices WHERE type = ''expense'' AND EXTRACT(YEAR FROM invoice_date) = EXTRACT(YEAR FROM CURRENT_DATE);', '948,150.25'),
+('procurement-session', 'Which invoices are still unpaid?', 'claude-3-5-haiku-20241022', 'SELECT id, supplier_id, amount, due_date FROM invoices WHERE paid = FALSE ORDER BY due_date ASC;', '4 rows (example: 8001|312|15000.00|2025-11-30; 8003|301|43000.00|2025-12-15)'),
+('sales-session', 'Which products were sold by Fernanda Lee?', 'gpt-4o', 'SELECT pr.id, pr.name, SUM(pi.quantity) AS qty_sold FROM purchases p JOIN purchase_items pi ON p.id = pi.purchase_id JOIN products pr ON pi.product_id = pr.id WHERE p.seller_id = (SELECT id FROM employees WHERE name = ''Fernanda Lee'') GROUP BY pr.id, pr.name ORDER BY qty_sold DESC;', 'Smartphone X|45; Notebook Pro|12; 4K Monitor|8'),
+('sales-session', 'Who bought the Smartphone X and when?', 'gpt-5', 'SELECT c.id, c.name, p.created_at FROM purchases p JOIN customers c ON p.customer_id = c.id JOIN purchase_items pi ON p.id = pi.purchase_id JOIN products pr ON pi.product_id = pr.id WHERE pr.name = ''Smartphone X'' ORDER BY p.created_at DESC LIMIT 20;', '312|Daniela Cruz|2025-11-18; 201|Acme Corp|2025-11-15; 145|Bright Co|2025-11-02'),
+('sales-session', 'Which employee sold the most by value last month?', 'gpt-4o-mini', 'SELECT e.id, e.name, SUM(p.total_amount) AS total_sold FROM purchases p JOIN employees e ON p.seller_id = e.id WHERE date_trunc(''month'', p.created_at) = date_trunc(''month'', current_date - INTERVAL ''1 month'') GROUP BY e.id, e.name ORDER BY total_sold DESC LIMIT 1;', '45|Fernanda Lee|48520.00'),
+('reporting-session', 'List sales with customer name, product and employee', 'gpt-5-mini', 'SELECT p.id AS purchase_id, c.name AS customer_name, pr.name AS product_name, e.name AS employee_name, p.created_at FROM purchases p JOIN customers c ON p.customer_id = c.id JOIN purchase_items pi ON p.id = pi.purchase_id JOIN products pr ON pi.product_id = pr.id LEFT JOIN employees e ON p.seller_id = e.id ORDER BY p.created_at DESC LIMIT 50;', 'rows (example: 901|Daniela Cruz|Smartphone X|Fernanda Lee|2025-11-18; 899|Acme Corp|Notebook Pro|Carlos Mendes|2025-11-15)');
+
