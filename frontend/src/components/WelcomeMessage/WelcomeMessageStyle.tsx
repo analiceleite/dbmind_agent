@@ -102,7 +102,7 @@ export const Particle = styled.div<{ delay: number; duration: number; left: numb
   }
 `;
 
-export const WelcomeContainer = styled.div<{ isTransitioning?: boolean }>`
+export const WelcomeContainer = styled.div<{ $isTransitioning?: boolean }>`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -113,17 +113,17 @@ export const WelcomeContainer = styled.div<{ isTransitioning?: boolean }>`
   width: 100%;
   transition: opacity 0.6s ease;
   
-  ${props => props.isTransitioning && `
+  ${props => props.$isTransitioning && `
     opacity: 0;
   `}
 `;
 
-export const WelcomeContent = styled.div<{ isTransitioning?: boolean }>`
+export const WelcomeContent = styled.div<{ $isTransitioning?: boolean }>`
   padding: 0 2rem;
   animation: ${floatAnimation} 8s ease-in-out infinite;
   transition: all 0.6s ease;
   
-  ${props => props.isTransitioning && `
+  ${props => props.$isTransitioning && `
     opacity: 0;
     transform: translateY(-30px);
     animation: none;

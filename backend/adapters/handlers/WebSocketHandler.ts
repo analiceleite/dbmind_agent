@@ -33,8 +33,12 @@ export class WebSocketHandler {
           // Stream response using use case
           try {
             let hasStreamed = false;
+            let chunkCount = 0;
+            
             for await (const chunk of this.useCase.execute(task, model)) {
               hasStreamed = true;
+              chunkCount++;
+              
               // Check if socket is still open before sending
               if (socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({ 
@@ -47,10 +51,18 @@ export class WebSocketHandler {
               }
             }
             
-            // Complete only if we actually streamed and socket is open
+            // The for-await loop has completed, meaning the generator finished
             if (hasStreamed && socket.readyState === WebSocket.OPEN) {
-              console.log(`[WebSocket] Task completed in ${Date.now() - startTime}ms`);
+              console.log(`[WebSocket] Task completed naturally with ${chunkCount} chunks in ${Date.now() - startTime}ms`);
               socket.send(JSON.stringify({ type: "complete" }));
+            } else if (!hasStreamed && socket.readyState === WebSocket.OPEN) {
+              console.log(`[WebSocket] No content streamed, sending error`);
+              socket.send(JSON.stringify({ 
+                type: "error", 
+                message: "No response generated" 
+              }));
+            } else if (socket.readyState !== WebSocket.OPEN) {
+              console.log(`[WebSocket] Socket closed before completion signal could be sent`);
             }
           } catch (error) {
             console.error(`[WebSocket] Task failed after ${Date.now() - startTime}ms:`, error);

@@ -26,7 +26,8 @@ export class RunTaskUseCase {
         yield chunk;
       }
       
-      console.log(`[UseCase] Completed successfully with ${chunkCount} chunks`);
+      // Generator completed naturally
+      console.log(`[UseCase] Stream completed successfully with ${chunkCount} chunks in ${Date.now() - startTime}ms`);
       
       if (!hasYielded) {
         throw new Error('No response from primary provider');

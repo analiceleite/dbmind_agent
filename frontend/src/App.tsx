@@ -55,8 +55,8 @@ function AppContent() {
       />
       
       <ResponsiveInputContainer 
-        isWelcome={isWelcomeMode}
-        isTransitioning={isTransitioning}
+        $isWelcome={isWelcomeMode}
+        $isTransitioning={isTransitioning}
       >
         <ResponsiveInputForm onSubmit={handleInputSubmit}>
           <ResponsiveInputWrapper isWelcome={isWelcomeMode}>

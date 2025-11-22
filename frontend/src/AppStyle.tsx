@@ -9,8 +9,8 @@ export const AppContainer = styled.div`
   transition: all 0.3s ease;
 `;
 
-export const ResponsiveInputContainer = styled.div<{ isWelcome: boolean; isTransitioning: boolean }>`
-  ${props => props.isWelcome ? `
+export const ResponsiveInputContainer = styled.div<{ $isWelcome: boolean; $isTransitioning: boolean }>`
+  ${props => props.$isWelcome ? `
     /* Welcome mode: input follows the natural content flow */
     position: absolute;
     top: 60vh;
@@ -32,7 +32,7 @@ export const ResponsiveInputContainer = styled.div<{ isWelcome: boolean; isTrans
     z-index: 1000;
   `}
   
-  ${props => props.isTransitioning && `
+  ${props => props.$isTransitioning && `
     transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   `}
 `;

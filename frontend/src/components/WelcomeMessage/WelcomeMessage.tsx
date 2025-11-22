@@ -22,8 +22,8 @@ export const WelcomeMessage = ({ isTransitioning, children }: WelcomeMessageProp
   return (
     <>
       <ParticlesEffect isVisible={particlesVisible} />
-      <WelcomeContainer isTransitioning={isTransitioning}>
-        <WelcomeContent isTransitioning={isTransitioning}>
+      <WelcomeContainer $isTransitioning={isTransitioning}>
+        <WelcomeContent $isTransitioning={isTransitioning}>
           <WelcomeTitle>React Agent</WelcomeTitle>
           <WelcomeSubtitle>
             Your intelligent assistant for mastering React with clear explanations, practical examples, and real-time answers.
