@@ -91,6 +91,8 @@ function AppContent() {
         isConnected={isConnected}
         onClearMessages={clearMessages}
         onOpenHistory={toggleHistory}
+        showClear={!isWelcomeMode}
+        showHistory={!isWelcomeMode}
         onNewConversation={() => startNewConversation('New conversation started — how can I help?')}
       />
       

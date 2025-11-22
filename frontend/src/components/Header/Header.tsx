@@ -7,10 +7,12 @@ interface HeaderProps {
   isConnected: boolean;
   onClearMessages: () => void;
   onOpenHistory?: () => void;
+  showClear?: boolean;
+  showHistory?: boolean;
   onNewConversation?: () => void;
 }
 
-export const Header = ({ logo, isConnected, onClearMessages, onOpenHistory, onNewConversation }: HeaderProps) => {
+export const Header = ({ logo, isConnected, onClearMessages, onOpenHistory, showClear = true, showHistory = true, onNewConversation }: HeaderProps) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -24,22 +26,18 @@ export const Header = ({ logo, isConnected, onClearMessages, onOpenHistory, onNe
         >
           {theme === 'dark' ? <SunIcon size={18} /> : <MoonIcon size={18} />}
         </ControlButton>
-        <ControlButton 
-          onClick={onClearMessages}
-          title="Clear chat history"
-        >
+
+        <ControlButton $visible={showClear} onClick={onClearMessages} title="Clear conversation">
           <TrashIcon size={18} />
         </ControlButton>
+
         <ControlButton
           onClick={() => onNewConversation && onNewConversation()}
           title="New conversation"
         >
           <RocketIcon size={18} />
         </ControlButton>
-        <ControlButton
-          onClick={() => onOpenHistory && onOpenHistory()}
-          title="History"
-        >
+        <ControlButton $visible={showHistory} onClick={() => onOpenHistory && onOpenHistory()} title="History">
           <BookIcon size={18} />
         </ControlButton>
         <StatusIndicator $isConnected={isConnected}>

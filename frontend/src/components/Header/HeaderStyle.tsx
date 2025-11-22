@@ -30,19 +30,22 @@ export const HeaderControls = styled.div`
   gap: 1rem;
 `;
 
-export const ControlButton = styled.button`
+export const ControlButton = styled.button<{ $visible?: boolean }>`
   background: transparent;
   border: none;
   color: ${props => props.theme.textSecondary};
   padding: 0.6rem;
   cursor: pointer;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: opacity 220ms ease, transform 220ms ease, color 160ms ease, background 160ms ease;
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 44px;
   min-height: 44px;
+  opacity: ${p => (p.$visible === false ? 0 : 1)};
+  transform: ${p => (p.$visible === false ? 'translateY(-6px) scale(0.98)' : 'translateY(0) scale(1)')};
+  pointer-events: ${p => (p.$visible === false ? 'none' : 'auto')};
 
   &:hover {
     background: ${props => props.theme.bgSecondary};

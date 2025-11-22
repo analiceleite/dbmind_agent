@@ -13,7 +13,7 @@ export const ResponsiveInputContainer = styled.div<{ $isWelcome: boolean; $isTra
   ${props => props.$isWelcome ? `
     /* Welcome mode: input follows the natural content flow */
     position: absolute;
-    top: 60vh;
+    top: 65vh;
     left: 50%;
     transform: translate(-50%, -50%);
     margin-top: 8rem; /* Responsive spacing after content */
