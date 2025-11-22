@@ -17,7 +17,7 @@ const agent = new ZypherAgent(
   zypherContext,
   new OpenAIModelProvider({
     apiKey: 'not-needed', // Local model doesn't need real API key
-    baseUrl: 'http://localhost:11434/v1', // Local OpenAI-compatible endpoint
+    baseUrl: 'http://131.161.43.4:11434/v1', // Remote Ollama endpoint
     openaiClientOptions: {
       maxRetries: 2,
       timeout: 60000, // 60 second timeout

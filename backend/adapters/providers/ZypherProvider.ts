@@ -30,6 +30,7 @@ Database Schema:
     const sqlTask = `${this.dbSchema}
 
 Generate ONLY a SQL SELECT query to answer: ${prompt}
+Limit the results to 10 rows if applicable.
 Return only the SQL, no explanations.`;
 
     const sqlEvent$ = this.agent.runTask(sqlTask, "phi3:mini");
@@ -76,7 +77,7 @@ Return only the SQL, no explanations.`;
 
     // 1. Fetch data from database
     const data = await this.queryDatabase(prompt);
-    
+
     if (!data) {
       yield "I don't have that information in the database.";
       return;
@@ -84,14 +85,15 @@ Return only the SQL, no explanations.`;
 
     console.log(`[ZypherProvider] Data retrieved in ${Date.now() - startTime}ms`);
 
+    // Limit data to prevent memory issues
+    const limitedData = data.length > 10 ? data.slice(0, 10) : data;
+
     // 2. Build direct and concise prompt
-    const finalPrompt = `Data: ${JSON.stringify(data)}
+    const finalPrompt = `You have this data from the database: ${JSON.stringify(limitedData)}
 
-Question: ${prompt}
+The user's question is: ${prompt}
 
-Answer directly and objectively using only this data.`;
-
-    // 3. Stream response
+Provide a direct answer based only on this data. Do not repeat the question, do not mention SQL queries, and do not show the data again. Just give the factual answer.`;    // 3. Stream response
     const event$ = this.agent.runTask(finalPrompt, selectedModel);
     const { eachValueFrom } = await import("rxjs-for-await");
 
@@ -108,7 +110,7 @@ Answer directly and objectively using only this data.`;
           break;
         }
       }
-      
+
       if (!hasResponse) {
         yield "Unable to process your request.";
       }

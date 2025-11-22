@@ -5,7 +5,7 @@ const pool = new Pool({
   user: Deno.env.get("POSTGRES_USER"),
   password: Deno.env.get("POSTGRES_PASSWORD"),
   database: Deno.env.get("POSTGRES_DB"),
-  hostname: "127.0.0.1",
+  hostname: "131.161.43.4",
   port: 5432,
 }, 3);
 
