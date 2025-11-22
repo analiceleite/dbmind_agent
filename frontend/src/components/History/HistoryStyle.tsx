@@ -40,6 +40,36 @@ export const HistoryListWrapper = styled.div`
   max-height: calc(100vh - 220px);
 `;
 
+export const SearchWrapper = styled.div`
+  padding: 10px 16px;
+  border-bottom: 1px solid ${p => p.theme.borderPrimary};
+  background: ${p => p.theme.bgPrimary};
+  display:flex;
+  gap:8px;
+  align-items:center;
+`;
+
+export const SearchInput = styled.input`
+  flex: 1 1 auto;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid ${p => p.theme.borderPrimary};
+  background: ${p => p.theme.bgTertiary};
+  color: ${p => p.theme.textPrimary};
+  font-size: 14px;
+  outline: none;
+  &:focus { box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+`;
+
+export const ClearButton = styled.button`
+  background: transparent;
+  border: none;
+  color: ${p => p.theme.textSecondary};
+  cursor: pointer;
+  font-weight: 600;
+  padding: 6px 8px;
+`;
+
 export const HistoryListItem = styled.div`
   padding: 12px 16px;
   border-bottom: 1px solid ${props => props.theme.borderPrimary};
@@ -79,6 +109,8 @@ export const ActionButton = styled.button`
 export const QuestionText = styled.div`
   font-weight: 600;
   color: ${props => props.theme.textPrimary};
+  cursor: pointer;
+  &:hover { color: ${p => p.theme.textAccent}; }
 `;
 
 export const AnswerPreview = styled.div`
@@ -88,3 +120,47 @@ export const AnswerPreview = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
+
+export const HistoryTimestamp = styled.div`
+  font-size: 12px;
+  color: ${p => p.theme.textSecondary};
+`;
+
+export const EmptyWrapper = styled.div`
+  padding: 24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+`;
+
+export const EmptyText = styled.div`
+  color: ${p => p.theme.textSecondary};
+  padding: 8px 12px;
+`;
+
+export const NoResultsWrapper = styled.div`
+  padding: 24px;
+  text-align: center;
+  color: ${p => p.theme.textSecondary};
+`;
+
+export const NoResultsIcon = styled.div`
+  font-size: 36px;
+  line-height: 1;
+  margin-bottom: 10px;
+`;
+
+export const NoResultsTitle = styled.div`
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: ${p => p.theme.textPrimary};
+`;
+
+export const NoResultsSubtitle = styled.div`
+  font-size: 13px;
+  margin-bottom: 14px;
+  color: ${p => p.theme.textSecondary};
+`;
+
+export const NoResultsActions = styled.div``;

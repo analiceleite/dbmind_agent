@@ -21,7 +21,11 @@ function AppContent() {
   const [showHistory, setShowHistory] = useState(false);
   const [historyItems, setHistoryItems] = useState<any[]>([]);
 
-  const openHistory = async () => {
+  const toggleHistory = async () => {
+    if (showHistory) {
+      setShowHistory(false);
+      return;
+    }
     setShowHistory(true);
     await reloadHistory();
   };
@@ -86,7 +90,7 @@ function AppContent() {
         logo={logo}
         isConnected={isConnected}
         onClearMessages={clearMessages}
-        onOpenHistory={openHistory}
+        onOpenHistory={toggleHistory}
         onNewConversation={() => startNewConversation('New conversation started — how can I help?')}
       />
       

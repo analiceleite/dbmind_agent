@@ -1,14 +1,16 @@
-import { 
-  Sun, 
-  Moon, 
-  Trash2, 
-  Send, 
-  Zap, 
-  Lightbulb, 
-  BookOpen, 
+import {
+  Sun,
+  Moon,
+  Trash2,
+  Send,
+  Zap,
+  Lightbulb,
+  BookOpen,
   Target,
   Wifi,
-  WifiOff
+  WifiOff,
+  X,
+  Search
 } from 'lucide-react';
 import { IconWrapper } from './LucideIconsStyle';
 
@@ -80,5 +82,17 @@ export const BookIcon = ({ size = 16, strokeWidth = 1.5, className }: IconProps)
 export const TargetIcon = ({ size = 16, strokeWidth = 1.5, className }: IconProps) => (
   <IconWrapper className={className}>
     <Target size={size} strokeWidth={strokeWidth} />
+  </IconWrapper>
+);
+
+export const CloseIcon = ({ size = 16, strokeWidth = 1.5, className }: IconProps) => (
+  <IconWrapper className={className}>
+    <X size={size} strokeWidth={strokeWidth} />
+  </IconWrapper>
+);
+
+export const SearchIcon = ({ size = 32, strokeWidth = 1.5, className }: IconProps) => (
+  <IconWrapper className={className}>
+    <Search size={size} strokeWidth={strokeWidth} />
   </IconWrapper>
 );
