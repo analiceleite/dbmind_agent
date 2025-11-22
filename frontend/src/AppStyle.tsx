@@ -42,12 +42,12 @@ export const ResponsiveInputForm = styled.form`
   width: 100%;
 `;
 
-export const ResponsiveInputWrapper = styled.div<{ isWelcome: boolean }>`
+export const ResponsiveInputWrapper = styled.div<{ $isWelcome: boolean }>`
   display: flex;
   align-items: center;
   background: ${props => props.theme.bgSecondary};
   border: 2px solid ${props => props.theme.textAccent};
-  border-radius: ${props => props.isWelcome ? '8px' : '0'};
+  border-radius: ${props => props.$isWelcome ? '8px' : '0'};
   padding: 0.5rem;
   gap: 0.5rem;
   transition: all 0.3s ease;

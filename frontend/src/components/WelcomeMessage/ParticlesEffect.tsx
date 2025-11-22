@@ -26,10 +26,10 @@ export const ParticlesEffect: React.FC<ParticlesEffectProps> = ({ isVisible = tr
       {particles.map((particle) => (
         <Particle
           key={particle.id}
-          delay={particle.delay}
-          duration={particle.duration}
-          left={particle.left}
-          size={particle.size}
+          $delay={particle.delay}
+          $duration={particle.duration}
+          $left={particle.left}
+          $size={particle.size}
           style={{
             opacity: isVisible ? 0.5 : 0
           }}

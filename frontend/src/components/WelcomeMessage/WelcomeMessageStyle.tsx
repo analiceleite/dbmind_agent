@@ -85,15 +85,15 @@ export const ParticlesBackground = styled.div`
   }
 `;
 
-export const Particle = styled.div<{ delay: number; duration: number; left: number; size: number }>`
+export const Particle = styled.div<{ $delay: number; $duration: number; $left: number; $size: number }>`
   position: absolute;
-  width: ${props => props.size}px;
-  height: ${props => props.size}px;
+  width: ${props => props.$size}px;
+  height: ${props => props.$size}px;
   background: ${props => props.theme.textSecondary};
   border-radius: 50%;
-  left: ${props => props.left}%;
-  animation: ${particleFloat} ${props => props.duration}s linear infinite;
-  animation-delay: ${props => props.delay}s;
+  left: ${props => props.$left}%;
+  animation: ${particleFloat} ${props => props.$duration}s linear infinite;
+  animation-delay: ${props => props.$delay}s;
   opacity: 0.4;
   transition: opacity 0.5s ease-out;
 

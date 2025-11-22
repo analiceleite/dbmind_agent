@@ -59,7 +59,7 @@ function AppContent() {
         $isTransitioning={isTransitioning}
       >
         <ResponsiveInputForm onSubmit={handleInputSubmit}>
-          <ResponsiveInputWrapper isWelcome={isWelcomeMode}>
+          <ResponsiveInputWrapper $isWelcome={isWelcomeMode}>
             <ResponsiveInputField
               ref={inputRef}
               type="text"

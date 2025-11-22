@@ -46,7 +46,7 @@ export const MarkdownRenderer = ({ content, showLoadingIndicator = false }: Mark
         {content}
       </ReactMarkdown>
       {showLoadingIndicator && (
-        <LoadingIndicator>●</LoadingIndicator>
+        <LoadingIndicator></LoadingIndicator>
       )}
     </MarkdownContainer>
   );

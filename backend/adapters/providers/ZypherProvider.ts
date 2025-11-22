@@ -12,7 +12,7 @@ export class ZypherProvider implements ModelProvider {
     console.log(`[ZypherProvider] Starting Zypher task with model: ${model || "phi3:mini"}`);
     const startTime = Date.now();
     
-    // Use Zypher Agent to run the task with streaming
+    // Use Zypher Agent to run the task with streaming (optimized model)
     const event$ = this.agent.runTask(prompt, model || "phi3:mini");
     const { eachValueFrom } = await import("rxjs-for-await");
     
@@ -29,14 +29,11 @@ export class ZypherProvider implements ModelProvider {
           }
           
           chunkCount++;
-          // Yield the content directly from Zypher (it already handles streaming and markdown properly)
+          // Yield the content directly from Zypher (optimized for speed)
           yield event.content;
         }
         
-        // Log other events for debugging but don't break the flow
-        else if (event.type === 'message') {
-          console.log(`[ZypherProvider] Message event received`);
-        }
+        // Handle cancellation
         else if (event.type === 'cancelled') {
           console.log(`[ZypherProvider] Task was cancelled`);
           break;

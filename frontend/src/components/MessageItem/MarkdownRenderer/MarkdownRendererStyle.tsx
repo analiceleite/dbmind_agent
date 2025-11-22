@@ -141,9 +141,43 @@ export const MarkdownContainer = styled.div`
   }
 `;
 
+const loadingDots = keyframes`
+  0% {
+    content: '';
+  }
+  25% {
+    content: '●';
+  }
+  50% {
+    content: '●●';
+  }
+  75% {
+    content: '●●●';
+  }
+  100% {
+    content: '';
+  }
+`;
+
 export const LoadingIndicator = styled.span`
   color: ${props => props.theme.textAccent};
-  animation: ${thinkingPulse} 1.5s infinite;
-  margin-left: 0.25rem;
-  display: inline;
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  font-weight: bold;
+  
+  &::after {
+    content: '';
+    animation: ${loadingDots} 1.2s infinite;
+    width: 2rem;
+    text-align: left;
+  }
+  
+  &::before {
+    content: 'Thinking';
+    font-size: 0.875rem;
+    color: ${props => props.theme.textSecondary};
+    margin-right: 0.5rem;
+    opacity: 0.8;
+  }
 `;

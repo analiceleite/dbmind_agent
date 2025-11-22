@@ -40,6 +40,10 @@ export const useZypherAgent = (wsUrl: string) => {
   const wsRef = useRef<WebSocket | null>(null);
   const messageIdRef = useRef(getInitialMessageId());
   const currentMessageIdRef = useRef<string | null>(null);
+  const chunkBufferRef = useRef<string>('');
+  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isUnmountingRef = useRef(false);
 
   // Save messages to localStorage whenever messages change
   useEffect(() => {
@@ -50,6 +54,15 @@ export const useZypherAgent = (wsUrl: string) => {
 
   useEffect(() => {
     const connect = () => {
+      // Prevent multiple connections in React Strict Mode
+      if (wsRef.current && wsRef.current.readyState === WebSocket.CONNECTING) {
+        return;
+      }
+      
+      // Close existing connection if it exists
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
 
       try {
         const ws = new WebSocket(wsUrl);
@@ -76,19 +89,43 @@ export const useZypherAgent = (wsUrl: string) => {
           }
           
           if (msg.type === 'chunk' && msg.content && currentMessageIdRef.current) {
-            setMessages((prev) => prev.map((m) => 
-              m.id === currentMessageIdRef.current
-                ? { ...m, text: m.text + msg.content }
-                : m
-            ));
+            // Buffer chunks for smoother streaming
+            chunkBufferRef.current += msg.content;
+            
+            // Clear existing timeout
+            if (updateTimeoutRef.current) {
+              clearTimeout(updateTimeoutRef.current);
+            }
+            
+            // Update UI with buffered content after short delay for batching
+            updateTimeoutRef.current = setTimeout(() => {
+              const bufferedContent = chunkBufferRef.current;
+              chunkBufferRef.current = '';
+              
+              setMessages((prev) => prev.map((m) => 
+                m.id === currentMessageIdRef.current
+                  ? { ...m, text: m.text + bufferedContent }
+                  : m
+              ));
+            }, 16); // ~60fps for smooth streaming
           }
           
           if (msg.type === 'complete') {
             setIsLoading(false);
+            
+            // Clear any pending timeout and flush remaining buffer
+            if (updateTimeoutRef.current) {
+              clearTimeout(updateTimeoutRef.current);
+              updateTimeoutRef.current = null;
+            }
+            
             if (currentMessageIdRef.current) {
+              const remainingBuffer = chunkBufferRef.current;
+              chunkBufferRef.current = '';
+              
               setMessages((prev) => prev.map((m) => 
                 m.id === currentMessageIdRef.current
-                  ? { ...m, isComplete: true }
+                  ? { ...m, text: m.text + remainingBuffer, isComplete: true }
                   : m
               ));
               currentMessageIdRef.current = null;
@@ -110,23 +147,45 @@ export const useZypherAgent = (wsUrl: string) => {
           console.error('WebSocket error:', error);
           setIsConnected(false);
         };
-        ws.onclose = () => {
-          console.log('WebSocket closed');
+        ws.onclose = (event) => {
+          console.log('WebSocket closed', event.code, event.reason);
           setIsConnected(false);
           setIsLoading(false);
-          setTimeout(() => {
-            if (!wsRef.current || wsRef.current.readyState === WebSocket.CLOSED) {
-              connect();
-            }
-          }, 3000);
+          
+          // Only reconnect if it wasn't a clean closure and component is still mounted
+          if (event.code !== 1000 && wsRef.current === ws && !isUnmountingRef.current) {
+            reconnectTimeoutRef.current = setTimeout(() => {
+              if (!isUnmountingRef.current && (wsRef.current === ws || wsRef.current?.readyState === WebSocket.CLOSED)) {
+                connect();
+              }
+            }, 3000);
+          }
         };
-      } catch {
+      } catch (error) {
+        console.error('Failed to create WebSocket:', error);
         setIsConnected(false);
       }
     };
 
     connect();
-    return () => wsRef.current?.close();
+    return () => {
+      // Mark as unmounting to prevent reconnections
+      isUnmountingRef.current = true;
+      
+      // Clean closure to prevent reconnection
+      if (wsRef.current) {
+        wsRef.current.close(1000, 'Component unmounting');
+        wsRef.current = null;
+      }
+      
+      // Clear all timeouts
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+    };
   }, [wsUrl]);
 
   const sendMessage = (text: string) => {
