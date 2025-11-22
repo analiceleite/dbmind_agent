@@ -1,7 +1,8 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import { MarkdownContainer, LoadingIndicator } from './MarkdownRendererStyle';
+import { MarkdownContainer } from './MarkdownRendererStyle';
+import DotsLoader from '../../Loaders/DotsLoader';
 import 'highlight.js/styles/github-dark.css';
 
 interface MarkdownRendererProps {
@@ -46,7 +47,7 @@ export const MarkdownRenderer = ({ content, showLoadingIndicator = false }: Mark
         {content}
       </ReactMarkdown>
       {showLoadingIndicator && (
-        <LoadingIndicator></LoadingIndicator>
+        <DotsLoader />
       )}
     </MarkdownContainer>
   );

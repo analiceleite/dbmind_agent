@@ -28,6 +28,9 @@ export const LoadingMessage = styled.div`
   padding: 1.25rem;
   border-radius: 12px;
   position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: center;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   background: ${props => props.theme.gradients.secondary};
@@ -39,7 +42,7 @@ export const LoadingMessage = styled.div`
 
 export const LoadingHeader = styled.strong`
   display: block;
-  margin-bottom: 0.5rem;
+  margin: 0 0 6px 0;
   color: ${props => props.theme.textSecondary};
   font-size: 0.875rem;
   font-weight: 600;
@@ -52,6 +55,14 @@ export const LoadingText = styled.p`
   line-height: 1.5;
   white-space: pre-wrap;
   color: ${props => props.theme.textPrimary};
+  flex: 1 1 auto;
+`;
+
+export const LoadingLeft = styled.div`
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width: 48px;
 `;
 
 export const LoadingIndicator = styled.span`

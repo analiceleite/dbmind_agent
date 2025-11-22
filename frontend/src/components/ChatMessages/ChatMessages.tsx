@@ -2,7 +2,8 @@ import { useRef, useEffect } from 'react';
 import type { Message } from '../../hooks/useZypherAgent';
 import { MessageItem } from '../MessageItem/MessageItem';
 import { WelcomeMessage } from '../WelcomeMessage/WelcomeMessage';
-import { MessagesContainer, LoadingMessage, LoadingHeader, LoadingText, LoadingIndicator } from './ChatMessagesStyle';
+import { MessagesContainer, LoadingMessage, LoadingHeader, LoadingText, LoadingLeft } from './ChatMessagesStyle';
+import DotsLoader from '../Loaders/DotsLoader';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -35,10 +36,13 @@ export const ChatMessages = ({ messages, isLoading, isTransitioning }: ChatMessa
       
       {isLoading && messages.length === 0 && (
         <LoadingMessage>
-          <LoadingHeader>DBMind Agent:</LoadingHeader>
-          <LoadingText>
-            <LoadingIndicator>●</LoadingIndicator>
-          </LoadingText>
+          <LoadingLeft>
+            <DotsLoader />
+          </LoadingLeft>
+          <div>
+            <LoadingHeader>DBMind Agent:</LoadingHeader>
+            <LoadingText>Carregando resposta…</LoadingText>
+          </div>
         </LoadingMessage>
       )}
       <div ref={messagesEndRef} />
