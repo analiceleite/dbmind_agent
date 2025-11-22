@@ -5,7 +5,6 @@ import {
 } from "@corespeed/zypher";
 
 import { config } from "./config/env.ts";
-import { OllamaProvider } from "./adapters/providers/OllamaProvider.ts";
 import { ZypherProvider } from "./adapters/providers/ZypherProvider.ts";
 import { RunTaskUseCase } from "./application/RunTaskUseCase.ts";
 import { WebSocketHandler } from "./adapters/handlers/WebSocketHandler.ts";
@@ -17,17 +16,20 @@ const zypherContext = await createZypherContext(Deno.cwd());
 const agent = new ZypherAgent(
   zypherContext,
   new OpenAIModelProvider({
-    apiKey: 'not-needed',
-    baseUrl: 'http://localhost:11434/v1',
+    apiKey: 'not-needed', // Local model doesn't need real API key
+    baseUrl: 'http://localhost:11434/v1', // Local OpenAI-compatible endpoint
+    openaiClientOptions: {
+      maxRetries: 2,
+      timeout: 60000, // 60 second timeout
+    }
   }),
 );
 
-// Initialize providers
-const ollamaProvider = new OllamaProvider();
+// Initialize Zypher provider - optimized for better streaming
 const zypherProvider = new ZypherProvider(agent);
 
-// Initialize use case with fallback
-const runTaskUseCase = new RunTaskUseCase(ollamaProvider, zypherProvider);
+// Use Zypher as the primary and only provider (application focus)
+const runTaskUseCase = new RunTaskUseCase(zypherProvider);
 
 // Initialize handlers
 const wsHandler = new WebSocketHandler(runTaskUseCase);

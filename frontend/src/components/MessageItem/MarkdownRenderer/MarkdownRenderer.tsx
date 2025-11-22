@@ -18,8 +18,6 @@ export const MarkdownRenderer = ({ content, showLoadingIndicator = false }: Mark
         components={{
           // Bold text formatting
           strong: ({ children }) => <strong className="markdown-strong">{children}</strong>,
-          // Keep paragraphs simple
-          p: ({ children }) => <span className="markdown-p">{children}</span>,
           // Lists
           ul: ({ children }) => <ul className="markdown-ul">{children}</ul>,
           ol: ({ children }) => <ol className="markdown-ol">{children}</ol>,

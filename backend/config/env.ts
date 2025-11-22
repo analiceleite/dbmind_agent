@@ -1,7 +1,7 @@
 // Centralized environment and configuration
 export interface AppConfig {
   port: number;
-  ollama: {
+  zypher: {
     baseUrl: string;
     defaultModel: string;
   };
@@ -20,8 +20,8 @@ function loadConfig(): AppConfig {
 
   return {
     port: parseInt(Deno.env.get("PORT") || "8000", 10),
-    ollama: {
-      baseUrl: Deno.env.get("OLLAMA_BASE_URL") || "http://localhost:11434",
+    zypher: {
+      baseUrl: Deno.env.get("ZYPHER_BASE_URL") || "http://localhost:11434",
       defaultModel: Deno.env.get("DEFAULT_MODEL") || "phi3:mini",
     },
     cors: {

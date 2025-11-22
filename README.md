@@ -1,44 +1,47 @@
 # 🤖 Zypher Agent Chat Application
 
-A full-stack AI chat application using Deno, React, Zypher Agent, and Ollama (Llama 3.2) running locally.
+A full-stack AI chat application using Deno, React, and Zypher Agent with local AI models.
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
 │  React Frontend (Port 5174)                     │
-│  - Chat interface                               │
+│  - Chat interface with real-time streaming      │
 │  - WebSocket client                             │
+│  - Markdown rendering & syntax highlighting     │
 └────────────────┬────────────────────────────────┘
                  │ WebSocket
                  ↓
 ┌─────────────────────────────────────────────────┐
 │  Deno Backend (Port 8000)                       │
 │  - WebSocket server                             │
-│  - Zypher Agent orchestration                   │
-└────────────────┬────────────────────────────────┘
-                 │ HTTP/API
-                 ↓
-┌─────────────────────────────────────────────────┐
-│  Ollama Container (Port 11434)                  │
-│  - Llama 3.2 model                              │
-│  - Local AI inference                           │
+│  - Zypher Agent with intelligent task routing   │
+│  - Modular provider architecture                │
 └─────────────────────────────────────────────────┘
 ```
 
 ## 🚀 Quick Start
 
-### 1. Start Ollama (Docker)
+### 1. Setup Ollama (LLM Provider)
+
+O Zypher Agent usa Ollama como provider de modelos locais:
 
 ```bash
-# Start the Ollama container
-docker-compose up -d
+# Instalar Ollama (Windows/Mac/Linux)
+# Visite: https://ollama.ai/download
 
-# Pull the Llama 3.2 model
-docker exec -it ollama ollama pull phi3:mini
+# Ou usar Docker
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 
-# Verify it's running
-docker exec -it ollama ollama list
+# Baixar um modelo (recomendado: Phi-3 Mini)
+ollama pull phi3:mini
+
+# Verificar modelos disponíveis
+ollama list
+
+# Testar se está funcionando
+curl http://localhost:11434/api/version
 ```
 
 ### 2. Start Backend (Deno)
@@ -66,10 +69,10 @@ The frontend will be available at `http://localhost:5174`
 
 1. **User types** → Message sent via WebSocket to backend
 2. **Backend receives** → Deno WebSocket server processes request
-3. **Zypher Agent** → Orchestrates the task and calls Ollama
-4. **Ollama processes** → Llama 3.2 generates AI response
-5. **Response returns** → Complete answer sent back through WebSocket
-6. **Frontend displays** → User sees the AI's response
+3. **Zypher Agent** → Intelligently processes the task with AI capabilities
+4. **AI processes** → Local model generates contextual response with streaming
+5. **Response streams** → Real-time chunks sent back through WebSocket
+6. **Frontend renders** → Markdown formatted response with syntax highlighting
 
 ### Technical Flow:
 
@@ -80,12 +83,12 @@ WebSocket → { type: "task", task: "Hello!", model: "phi3:mini" }
 // 2. Backend shows loading
 WebSocket ← { type: "status", message: "Processing task..." }
 
-// 3. Zypher Agent calls Ollama
-agent.runTask("Hello!", "phi3:mini")
-  → Ollama API at localhost:11434
-  → Llama 3.2 generates response
+// 3. Zypher Agent processes with streaming
+agent.runTaskStream("Hello!", "phi3:mini")
+  → Intelligent task routing and context management
+  → Streaming response generation
 
-// 4. Backend sends complete response
+// 4. Backend sends streaming chunks
 WebSocket ← { type: "complete", message: "Hi! How can I help?" }
 
 // 5. Frontend displays message
@@ -96,11 +99,11 @@ WebSocket ← { type: "complete", message: "Hi! How can I help?" }
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
 | **Runtime** | Deno | TypeScript/JavaScript runtime for backend |
-| **Backend** | Zypher Agent | AI agent orchestration framework |
-| **LLM** | Ollama (Llama 3.2) | Local AI model for generating responses |
-| **Frontend** | React + Vite | User interface |
-| **Communication** | WebSocket | Real-time bidirectional communication |
-| **Containerization** | Docker | Running Ollama in isolated environment |
+| **AI Framework** | Zypher Agent | Intelligent AI agent orchestration and task routing |
+| **AI Models** | Local Models | Phi-3 Mini and other compatible models |
+| **Frontend** | React + Vite | Modern UI with real-time streaming |
+| **Communication** | WebSocket | Real-time bidirectional streaming communication |
+| **Styling** | Styled Components | Modular component-based styling |
 
 ## 📁 Project Structure
 
@@ -119,21 +122,17 @@ zypher_agent/
 │   │       └── useZypherAgent.ts  # WebSocket hook
 │   └── package.json        # Frontend dependencies
 │
-├── docker-compose.yml      # Ollama container config
+├── infrastructure/         # Optional database config
 └── README.md              # This file
 ```
 
 ## 🔑 Key Components
 
 ### Zypher Agent
-- AI agent framework that orchestrates complex tasks
-- Connects to different LLM providers (Ollama, OpenAI, Claude)
-- Manages context, memory, and tool usage
-
-### Ollama
-- Runs open-source LLMs locally
-- Compatible with OpenAI API format
-- Free and private (no data leaves your machine)
+- Advanced AI agent framework for intelligent task orchestration
+- Supports multiple LLM providers with OpenAI-compatible APIs
+- Manages context, memory, and tool usage with streaming capabilities
+- Provides intelligent routing and response optimization
 
 ### Deno
 - Modern TypeScript/JavaScript runtime
@@ -142,29 +141,89 @@ zypher_agent/
 
 ## 🎯 Features
 
-- ✅ Real-time chat with AI
-- ✅ Local AI processing (private and free)
-- ✅ Simple and clean UI
-- ✅ WebSocket for instant responses
-- ✅ Loading indicator while processing
-- ✅ Complete responses (no streaming chunks)
+- ✅ Real-time streaming chat with intelligent AI agents
+- ✅ Advanced markdown rendering with syntax highlighting
+- ✅ Dark/light theme support with smooth transitions
+- ✅ WebSocket streaming for fluid response delivery
+- ✅ Modular provider architecture with Zypher focus
+- ✅ Enhanced UI with particles effects and animations
+
+## ⚙️ Configuração do Ollama
+
+O Zypher Agent usa Ollama como LLM provider através de uma API compatível com OpenAI:
+
+### Configuração atual no server.ts:
+```typescript
+const agent = new ZypherAgent(
+  zypherContext,
+  new OpenAIModelProvider({
+    apiKey: 'not-needed', // Ollama não precisa de API key
+    baseUrl: 'http://localhost:11434/v1', // Endpoint compatível com OpenAI
+    openaiClientOptions: {
+      maxRetries: 2,
+      timeout: 60000,
+    }
+  }),
+);
+```
+
+### Modelos recomendados:
+- **phi3:mini** - Rápido e eficiente (3.8B parâmetros)
+- **llama3.2:3b** - Boa qualidade geral
+- **codellama:7b** - Especializado em código
+- **mistral:7b** - Excelente para conversação
+
+### Variáveis de ambiente (opcional):
+```bash
+# .env
+ZYPHER_BASE_URL=http://localhost:11434
+DEFAULT_MODEL=phi3:mini
+PORT=8000
+```
 
 ## 🐛 Troubleshooting
 
-**Ollama not responding:**
+**Ollama não está respondendo:**
 ```bash
-docker-compose logs ollama
-docker-compose restart ollama
-```
-
-**Backend errors:**
-```bash
-# Check if Ollama is running
+# Verificar se Ollama está rodando
 curl http://localhost:11434/api/version
 
-# Restart backend
+# Iniciar Ollama
+ollama serve
+
+# Ou via Docker
+docker start ollama
+
+# Verificar logs
+docker logs ollama
+```
+
+**Zypher Agent not responding:**
+```bash
+# Check backend logs
 cd backend
 deno task start
+
+# Verify model is available
+ollama list
+
+# Test Ollama directly
+curl http://localhost:11434/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "phi3:mini",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "stream": false
+  }'
+```
+
+**Frontend issues:**
+```bash
+# Restart frontend development server
+cd frontend
+npm run dev
+
+# Clear browser cache and refresh
 ```
 
 **Frontend not connecting:**

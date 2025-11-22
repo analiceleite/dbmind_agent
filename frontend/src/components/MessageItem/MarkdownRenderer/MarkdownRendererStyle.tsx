@@ -14,12 +14,6 @@ export const thinkingPulse = keyframes`
 export const MarkdownContainer = styled.div`
   line-height: 1.5;
   color: ${props => props.theme.textPrimary};
-
-  /* Paragraphs - keep simple */
-  .markdown-p {
-    margin: 0;
-    display: inline;
-  }
   
   /* Add spacing around code blocks */
   .markdown-code-block + .markdown-p,
@@ -46,10 +40,6 @@ export const MarkdownContainer = styled.div`
 
   .markdown-ol {
     list-style-type: decimal;
-  }
-
-  .markdown-li {
-    line-height: 0.5;
   }
 
   .markdown-li::marker {
