@@ -16,10 +16,12 @@ export class ZypherProvider implements ModelProvider {
 Database Schema:
 - budgets: id, department, year, amount
 - debts: id, creditor, amount, due_date, paid
-- customers: id, name, email, phone, city
-- products: id, name, category, price
-- employees: id, name, position, salary
-- sales: id, customer_id, product_id, employee_id, quantity, sale_date
+- suppliers: id, name, contact_email, phone, city
+- customers: id, name, email, phone, city, registration_date
+- products: id, name, category, price, stock_quantity, supplier_id
+- employees: id, name, position, salary, hire_date, department
+- sales: id, customer_id, product_id, employee_id, quantity, unit_price, total_amount, sale_date
+- invoices: id, supplier_id, amount, issue_date, due_date, paid
     `.trim();
   }
 
@@ -84,8 +86,24 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
     // Limit data to prevent memory issues
     const limitedData = data.length > 10 ? data.slice(0, 10) : data;
 
-    // Format data as text
-    const dataText = limitedData.map(row => `${row.name} (${row.category}, $${row.price})`).join(', ');
+    // Check if it's a scalar result (e.g., COUNT, SUM)
+    const isScalar = limitedData.length === 1 && Object.keys(limitedData[0]).length === 1;
+
+    let dataText: string;
+    if (isScalar) {
+      // For scalar results, just use the value
+      dataText = Object.values(limitedData[0])[0]?.toString() || '0';
+    } else {
+      // Format data as text
+      dataText = limitedData.map(row => {
+        // Try to format nicely, fallback to JSON if columns don't match
+        if (row.name && row.category && row.price !== undefined) {
+          return `${row.name} (${row.category}, $${row.price})`;
+        } else {
+          return Object.entries(row).map(([k, v]) => `${k}: ${v}`).join(', ');
+        }
+      }).join(', ');
+    }
 
     // 2. Build direct and concise prompt
     const finalPrompt = `You have this data from the database: ${dataText}
