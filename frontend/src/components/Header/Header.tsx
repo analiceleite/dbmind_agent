@@ -14,7 +14,7 @@ export const Header = ({ logo, isConnected, onClearMessages }: HeaderProps) => {
   return (
     <HeaderContainer>
       <Logo src={logo} alt="Logo" $isDark={theme === 'dark'} />
-      <Title>React Agent</Title>
+      <Title>DBMind Agent</Title>
       <HeaderControls>
         <ControlButton 
           onClick={toggleTheme}

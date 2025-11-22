@@ -35,7 +35,7 @@ export const ChatMessages = ({ messages, isLoading, isTransitioning }: ChatMessa
       
       {isLoading && messages.length === 0 && (
         <LoadingMessage>
-          <LoadingHeader>React Agent:</LoadingHeader>
+          <LoadingHeader>DBMind Agent:</LoadingHeader>
           <LoadingText>
             <LoadingIndicator>●</LoadingIndicator>
           </LoadingText>

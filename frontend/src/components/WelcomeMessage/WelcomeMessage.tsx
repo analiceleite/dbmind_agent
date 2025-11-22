@@ -24,9 +24,9 @@ export const WelcomeMessage = ({ isTransitioning, children }: WelcomeMessageProp
       <ParticlesEffect isVisible={particlesVisible} />
       <WelcomeContainer $isTransitioning={isTransitioning}>
         <WelcomeContent $isTransitioning={isTransitioning}>
-          <WelcomeTitle>React Agent</WelcomeTitle>
+          <WelcomeTitle>DBMind Agent</WelcomeTitle>
           <WelcomeSubtitle>
-            Your intelligent assistant for mastering React with clear explanations, practical examples, and real-time answers.
+            Your intelligent database assistant that generates SQL queries dynamically and provides accurate answers based on company data.
           </WelcomeSubtitle>
 
           <WelcomeFeatures>
@@ -34,25 +34,25 @@ export const WelcomeMessage = ({ isTransitioning, children }: WelcomeMessageProp
               <FeatureIcon className="feature-icon">
                 <RocketIcon />
               </FeatureIcon>
-              <FeatureText>Instant Answers</FeatureText>
+              <FeatureText>Dynamic SQL Generation</FeatureText>
             </FeatureItem>
             <FeatureItem>
               <FeatureIcon className="feature-icon">
                 <BulbIcon />
               </FeatureIcon>
-              <FeatureText>Practical Examples</FeatureText>
+              <FeatureText>Database Insights</FeatureText>
             </FeatureItem>
             <FeatureItem>
               <FeatureIcon className="feature-icon">
                 <BookIcon />
               </FeatureIcon>
-              <FeatureText>Detailed Explanations</FeatureText>
+              <FeatureText>Accurate Responses</FeatureText>
             </FeatureItem>
             <FeatureItem>
               <FeatureIcon className="feature-icon">
                 <TargetIcon />
               </FeatureIcon>
-              <FeatureText>Specialized Focus</FeatureText>
+              <FeatureText>Data-Driven Intelligence</FeatureText>
             </FeatureItem>
           </WelcomeFeatures>
           

@@ -1,30 +1,30 @@
-# 🤖 Zypher Agent Chat Application
+# 🤖 DBMind Agent
 
-A full-stack AI chat application using Deno, React, and Zypher Agent with local AI models and PostgreSQL database integration.
+An intelligent database assistant that dynamically generates SQL queries and provides accurate answers based on company data. Built with Deno, React, and Zypher Agent, featuring real-time streaming chat and PostgreSQL integration.
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
 │  React Frontend (Port 5173)                     │
-│  - Chat interface with real-time streaming      │
+│  - Chat interface for database queries          │
+│  - Real-time streaming responses                │
 │  - WebSocket client                             │
-│  - Markdown rendering & syntax highlighting     │
 └────────────────┬────────────────────────────────┘
                  │ WebSocket
                  ↓
 ┌─────────────────────────────────────────────────┐
 │  Deno Backend (Port 8000)                       │
-│  - WebSocket server                             │
-│  - Zypher Agent with database queries           │
-│  - PostgreSQL integration                       │
+│  - Intelligent SQL query generation             │
+│  - Database validation & execution              │
+│  - Zypher Agent integration                     │
 └────────────────┬────────────────────────────────┘
                  │
                  ↓
 ┌─────────────────────────────────────────────────┐
 │  PostgreSQL Database (Port 5432)                │
-│  - Fake company data (customers, sales, etc.)   │
-│  - Strategic insights for AI responses          │
+│  - Company data (customers, sales, budgets)     │
+│  - Source of truth for AI responses             │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -61,11 +61,11 @@ Frontend runs at `http://localhost:5173`
 
 ## 📊 Features
 
-- ✅ Real-time streaming chat with AI agents
-- ✅ PostgreSQL database with fake company data
-- ✅ Strategic business insights from database queries
-- ✅ Markdown rendering with syntax highlighting
-- ✅ WebSocket communication
+- ✅ Dynamic SQL query generation from natural language
+- ✅ Intelligent responses based only on available data
+- ✅ Real-time streaming chat with database insights
+- ✅ PostgreSQL integration with company data
+- ✅ WebSocket communication for instant responses
 - ✅ Dark/light theme support
 
 ## 🛠️ Technology Stack

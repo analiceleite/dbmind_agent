@@ -65,7 +65,7 @@ function AppContent() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isWelcomeMode ? "What would you like to learn about React?" : "Type your question..."}
+              placeholder={isWelcomeMode ? "What do you want to know about your company data?" : "Type your question..."}
               disabled={!isConnected || (isWelcomeMode && isTransitioning)}
               autoFocus={isWelcomeMode}
             />
