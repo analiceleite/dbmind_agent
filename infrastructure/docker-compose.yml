@@ -1,11 +1,11 @@
-name: zypher_stack
+name: zypher_agent
 
 services:
   postgres:
     image: postgres:15
     container_name: postgres
     env_file:
-      - .env
+      - ../backend/.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -13,9 +13,34 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./fake_company.sql:/docker-entrypoint-initdb.d/fake_company.sql
+      - pg_data:/var/lib/postgresql/data
+      - ./fake_company.sql:/docker-entrypoint-initdb.d/fake_company.sql:ro
     restart: unless-stopped
 
-volumes:    
+  backend:
+    image: ${BACKEND_IMAGE:-analiceleite/zypher_agent-backend:beta}
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    env_file:
+      - ../backend/.env
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-analiceleite/zypher_agent-frontend:beta}
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
   pg_data:
     driver: local
