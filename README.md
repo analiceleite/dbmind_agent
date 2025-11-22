@@ -1,12 +1,10 @@
 # 🤖 DBMind Agent
 
-An intelligent database assistant that dynamically generates SQL queries and provides accurate answers based on company data. Built with Deno, React, and Zypher Agent, featuring real-time streaming chat and PostgreSQL integration.
+An intelligent database assistant that dynamically generates SQL queries and provides accurate answers based on company data. Built with Deno, React, and Zypher Agent, featuring real-time streaming chat and PostgreSQL integration with Anthropic Claude AI.
 
 ## 🏗️ Architecture
 
-The frontend and the backend are running locally on my machine, but the database and ollama are running on a cloud virtual machine with 128GB of memory.
-
-# INSERT PRINTSCREEN
+The frontend and backend run locally, while the database runs on a cloud VM. AI processing is handled by Anthropic's Claude models via API.
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -21,7 +19,7 @@ The frontend and the backend are running locally on my machine, but the database
 │  Deno Backend (Port 8000)                       │
 │  - Intelligent SQL query generation             │
 │  - Database validation & execution              │
-│  - Zypher Agent integration                     │
+│  - Zypher Agent + Anthropic Claude integration  │
 └────────────────┬────────────────────────────────┘
                  │
                  ↓
@@ -30,37 +28,47 @@ The frontend and the backend are running locally on my machine, but the database
 │  - Company data (customers, sales, budgets)     │
 │  - Source of truth for AI responses             │
 └─────────────────────────────────────────────────┘
+                 │
+                 ↓
+┌─────────────────────────────────────────────────┐
+│  Anthropic Claude API                           │
+│  - claude-3-5-haiku-20241022 model              │
+│  - Real-time streaming AI responses             │
+└─────────────────────────────────────────────────┘
 ```
 
 ## 🚀 Quick Start
 
-### 1. Start Infrastructure (Database & AI)
+### Prerequisites
+- Deno installed
+- Node.js installed
+- Anthropic API key (get from [Anthropic Console](https://console.anthropic.com/))
 
+### 1. Set Environment Variables
 ```bash
-# Start Postgres and Ollama
-docker-compose -f infrastructure/docker-compose.yml up -d
-
-# Pull AI model
-docker exec ollama ollama pull phi3:mini
+# Backend: Create .env file or export
+export ANTHROPIC_API_KEY=your_api_key_here
 ```
 
-### 2. Start Backend
+### 2. Start Database
+```bash
+# Start Postgres
+docker-compose -f infrastructure/docker-compose.yml up -d
+```
 
+### 3. Start Backend
 ```bash
 cd backend
 deno task start
 ```
-
 Backend runs at `http://localhost:8000`
 
-### 3. Start Frontend
-
+### 4. Start Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
 Frontend runs at `http://localhost:5173`
 
 ## 📊 Features
@@ -78,7 +86,7 @@ Frontend runs at `http://localhost:5173`
 |-----------|------------|
 | **Backend** | Deno + TypeScript |
 | **Frontend** | React + Vite |
-| **AI** | Zypher Agent + Ollama |
+| **AI** | Zypher Agent + Anthropic Claude |
 | **Database** | PostgreSQL |
 | **Communication** | WebSocket |
 
@@ -101,23 +109,18 @@ docker-compose -f infrastructure/docker-compose.yml down -v
 docker-compose -f infrastructure/docker-compose.yml up -d
 ```
 
-**AI model not responding:**
-```bash
-# Check model
-docker exec ollama ollama list
-
-# Test Ollama
-curl http://localhost:11434/api/version
-```
+**AI API issues:**
+- Ensure `ANTHROPIC_API_KEY` is set correctly
+- Check API rate limits in your Anthropic dashboard
+- Verify model availability: `claude-3-5-haiku-20241022`
 
 **Ports in use:**
 - Frontend: 5173
 - Backend: 8000
 - Database: 5432
-- Ollama: 11434
 
 ## 📚 Links
 
 - [Zypher Agent](https://jsr.io/@corespeed/zypher)
-- [Ollama](https://ollama.ai/)
+- [Anthropic Claude](https://anthropic.com/)
 - [Deno](https://deno.land/)

@@ -1,22 +1,6 @@
 name: zypher_stack
 
 services:
-  ollama:
-    image: ollama/ollama:0.13.0
-    container_name: ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    environment:
-      - OLLAMA_HOST=0.0.0.0:11434
-    deploy:
-      resources:
-        limits:
-          memory: 2g
-          cpus: '1.0'
-    restart: unless-stopped
-
   postgres:
     image: postgres:15
     container_name: postgres
@@ -32,9 +16,6 @@ services:
       - ./fake_company.sql:/docker-entrypoint-initdb.d/fake_company.sql
     restart: unless-stopped
 
-volumes:
-  ollama_data:
-    driver: local
-    
+volumes:    
   pg_data:
     driver: local

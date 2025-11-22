@@ -27,13 +27,17 @@ Database Schema:
    * Generates SQL and executes the query in one step
    */
   private async queryDatabase(prompt: string): Promise<any[] | null> {
-    const sqlTask = `${this.dbSchema}
+    const sqlTask = `You are an expert SQL query generator. Based on the following database schema:
 
-Generate ONLY a SQL SELECT query to answer: ${prompt}
-Limit the results to 10 rows if applicable.
-Return only the SQL, no explanations.`;
+${this.dbSchema}
 
-    const sqlEvent$ = this.agent.runTask(sqlTask, "phi3:mini");
+Generate the most appropriate SQL query to answer the user's question: "${prompt}"
+
+- If the question requires retrieving data, use SELECT and limit results to 10 rows if applicable.
+- Ensure the query is valid and directly executable.
+- Output ONLY the SQL query, with no explanations, comments, or code blocks.`;
+
+    const sqlEvent$ = this.agent.runTask(sqlTask, "claude-3-5-haiku-20241022");
     const { eachValueFrom } = await import("rxjs-for-await");
 
     let sqlQuery = "";
@@ -44,15 +48,7 @@ Return only the SQL, no explanations.`;
     }
 
     // Clean up SQL
-    sqlQuery = sqlQuery.trim()
-      .replace(/^```sql\s*/, '')
-      .replace(/\s*```$/, '')
-      .replace(/^```\s*/, '')
-      .trim();
-
-    if (!sqlQuery.toUpperCase().startsWith('SELECT')) {
-      return null;
-    }
+    sqlQuery = sqlQuery.trim();
 
     console.log(`[ZypherProvider] SQL: ${sqlQuery}`);
 
@@ -71,7 +67,7 @@ Return only the SQL, no explanations.`;
 
   async* streamResponse(prompt: string, model?: string): AsyncIterable<string> {
     const startTime = Date.now();
-    const selectedModel = model || "phi3:mini";
+    const selectedModel = model || "claude-3-5-haiku-20241022";
 
     console.log(`[ZypherProvider] Processing: "${prompt}"`);
 
@@ -88,8 +84,11 @@ Return only the SQL, no explanations.`;
     // Limit data to prevent memory issues
     const limitedData = data.length > 10 ? data.slice(0, 10) : data;
 
+    // Format data as text
+    const dataText = limitedData.map(row => `${row.name} (${row.category}, $${row.price})`).join(', ');
+
     // 2. Build direct and concise prompt
-    const finalPrompt = `You have this data from the database: ${JSON.stringify(limitedData)}
+    const finalPrompt = `You have this data from the database: ${dataText}
 
 The user's question is: ${prompt}
 

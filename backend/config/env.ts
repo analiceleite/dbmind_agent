@@ -22,7 +22,7 @@ function loadConfig(): AppConfig {
     port: parseInt(Deno.env.get("PORT") || "8000", 10),
     zypher: {
       baseUrl: Deno.env.get("ZYPHER_BASE_URL") || "http://localhost:11434",
-      defaultModel: Deno.env.get("DEFAULT_MODEL") || "phi3:mini",
+      defaultModel: Deno.env.get("DEFAULT_MODEL") || "claude-3-5-haiku-20241022",
     },
     cors: {
       origin: "*",

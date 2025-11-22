@@ -1,6 +1,6 @@
 import {
   createZypherContext,
-  OpenAIModelProvider,
+  AnthropicModelProvider,
   ZypherAgent,
 } from "@corespeed/zypher";
 
@@ -10,18 +10,22 @@ import { RunTaskUseCase } from "./application/RunTaskUseCase.ts";
 import { WebSocketHandler } from "./adapters/handlers/WebSocketHandler.ts";
 import { HttpHandler } from "./adapters/handlers/HttpHandler.ts";
 
+// Helper function to safely get environment variables
+function getRequiredEnv(name: string): string {
+  const value = Deno.env.get(name);
+  if (!value) {
+    throw new Error(`Environment variable ${name} is not set`);
+  }
+  return value;
+}
+
 // Initialize the agent execution context
 const zypherContext = await createZypherContext(Deno.cwd());
 
 const agent = new ZypherAgent(
   zypherContext,
-  new OpenAIModelProvider({
-    apiKey: 'not-needed', // Local model doesn't need real API key
-    baseUrl: 'http://131.161.43.4:11434/v1', // Remote Ollama endpoint
-    openaiClientOptions: {
-      maxRetries: 2,
-      timeout: 60000, // 60 second timeout
-    }
+  new AnthropicModelProvider({
+    apiKey: getRequiredEnv("ANTHROPIC_API_KEY"),
   }),
 );
 
