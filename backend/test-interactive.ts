@@ -16,7 +16,7 @@ async function handleInput() {
       const question = {
         type: 'task',
         task: line.trim(),
-        model: 'llama3.2'
+        model: 'phi3:mini'
       };
       ws.send(JSON.stringify(question));
     }

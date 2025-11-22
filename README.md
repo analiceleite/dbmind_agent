@@ -35,7 +35,7 @@ A full-stack AI chat application using Deno, React, Zypher Agent, and Ollama (Ll
 docker-compose up -d
 
 # Pull the Llama 3.2 model
-docker exec -it ollama ollama pull llama3.2
+docker exec -it ollama ollama pull phi3:mini
 
 # Verify it's running
 docker exec -it ollama ollama list
@@ -75,13 +75,13 @@ The frontend will be available at `http://localhost:5174`
 
 ```typescript
 // 1. Frontend sends message
-WebSocket → { type: "task", task: "Hello!", model: "llama3.2" }
+WebSocket → { type: "task", task: "Hello!", model: "phi3:mini" }
 
 // 2. Backend shows loading
 WebSocket ← { type: "status", message: "Processing task..." }
 
 // 3. Zypher Agent calls Ollama
-agent.runTask("Hello!", "llama3.2")
+agent.runTask("Hello!", "phi3:mini")
   → Ollama API at localhost:11434
   → Llama 3.2 generates response
 

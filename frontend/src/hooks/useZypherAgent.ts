@@ -133,7 +133,7 @@ export const useZypherAgent = (wsUrl: string) => {
     if (!wsRef.current) return;
     
     setMessages((prev) => [...prev, { id: `${++messageIdRef.current}`, role: 'user', text, isComplete: true }]);
-    wsRef.current.send(JSON.stringify({ type: 'task', task: text, model: 'llama3.2' }));
+    wsRef.current.send(JSON.stringify({ type: 'task', task: text, model: 'phi3:mini' }));
   };
 
   const clearMessages = () => {
