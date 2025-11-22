@@ -1,4 +1,4 @@
-FROM denoland/deno:stable
+FROM denoland/deno:alpine
 
 # Create app directory
 WORKDIR /app
