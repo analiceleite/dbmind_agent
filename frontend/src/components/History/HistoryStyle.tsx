@@ -4,6 +4,7 @@ export const HistoryContainer = styled.div`
   position: fixed;
   right: 20px;
   top: 80px;
+  bottom: 7rem;
   width: 360px;
   max-height: calc(100vh - 160px);
   background: ${props => props.theme.bgTertiary};
