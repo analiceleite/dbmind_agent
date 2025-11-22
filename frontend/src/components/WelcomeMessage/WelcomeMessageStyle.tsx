@@ -112,6 +112,7 @@ export const WelcomeContainer = styled.div<{ $isTransitioning?: boolean }>`
   max-width: 90vw;
   width: 100%;
   transition: opacity 0.6s ease;
+  /* spotlight moved to MessagesContainer so it wraps the whole area */
   
   ${props => props.$isTransitioning && `
     opacity: 0;
@@ -122,6 +123,8 @@ export const WelcomeContent = styled.div<{ $isTransitioning?: boolean }>`
   padding: 0 2rem;
   animation: ${floatAnimation} 8s ease-in-out infinite;
   transition: all 0.6s ease;
+  position: relative;
+  z-index: 1;
   
   ${props => props.$isTransitioning && `
     opacity: 0;

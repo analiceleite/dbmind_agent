@@ -6,7 +6,9 @@ export const HistoryContainer = styled.div`
   top: 80px;
   bottom: 7rem;
   width: 360px;
-  max-height: calc(100vh - 160px);
+  /* use full available area between top and bottom and let inner content scroll */
+  display: flex;
+  flex-direction: column;
   background: ${props => props.theme.bgTertiary};
   border-radius: 10px;
   border: 1px solid ${props => props.theme.borderPrimary};
@@ -37,7 +39,9 @@ export const CloseButton = styled.button`
 
 export const HistoryListWrapper = styled.div`
   overflow-y: auto;
-  max-height: calc(100vh - 220px);
+  /* allow the wrapper to fill remaining space inside the container so all items can render and scroll */
+  flex: 1 1 auto;
+  min-height: 0;
 `;
 
 export const SearchWrapper = styled.div`

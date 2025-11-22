@@ -21,6 +21,25 @@ export const MessagesContainer = styled.main`
   box-shadow: 0 4px 8px ${props => props.theme.shadowSecondary};
   transition: all 0.3s ease;
   position: relative;
+  --mx: 50%;
+  --my: 50%;
+
+  /* spotlight layer (shows only when data-spotlight=true) */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 10%, rgba(255,255,255,0.02) 20%, transparent 40%);
+    opacity: 0;
+    transition: opacity 350ms ease, background-position 120ms linear;
+    mix-blend-mode: screen;
+    z-index: 0;
+  }
+
+  &[data-spotlight="true"]::before {
+    opacity: 1;
+  }
 `;
 
 export const LoadingMessage = styled.div`
