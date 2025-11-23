@@ -1,4 +1,7 @@
 import { createGlobalStyle } from "styled-components";
+// Import font assets so the bundler (Vite) includes them in the build output.
+import NebulaRegularWoff2 from "../assets/fonts/Nebula-Regular.woff2";
+import NebulaHollowWoff2 from "../assets/fonts/Nebula-Hollow.woff2";
 import "highlight.js/styles/github-dark.css";
 
 export const GlobalStyles = createGlobalStyle`
@@ -8,11 +11,19 @@ export const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  /* Nebula regular (bundled) */
   @font-face {
     font-family: "Nebula";
-    src: url("assets/fonts/Nebula-Regular.woff2") format("woff2"),
-      url("assets/fonts/Nebula-Regular.woff") format("woff"),
-      url("assets/fonts/Nebula-Regular.otf") format("opentype");
+    src: url(${NebulaRegularWoff2}) format("woff2");
+    font-weight: 400 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Nebula hollow (only if used) */
+  @font-face {
+    font-family: "Nebula Hollow";
+    src: url(${NebulaHollowWoff2}) format("woff2");
     font-weight: 400 700;
     font-style: normal;
     font-display: swap;
