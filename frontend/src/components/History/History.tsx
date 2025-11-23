@@ -99,13 +99,13 @@ export const History = ({ items, onClose, onSelect, onReload }: Props) => {
                 <div style={{ marginTop: 12, fontWeight: 600 }}>{currentItem?.question}</div>
             </Modal>
 
-            <Modal isOpen={editOpen} title="Edit history entry" onClose={() => setEditOpen(false)} onConfirm={async () => {
+            <Modal isOpen={editOpen} title="Edit conversation title" onClose={() => setEditOpen(false)} onConfirm={async () => {
                 if (!currentItem) return;
                 try {
                     const res = await fetch(`http://localhost:8000/history/${currentItem.id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ question: editQuestion, answer: editAnswer })
+                        body: JSON.stringify({ question: editQuestion })
                     });
                     if (res.ok) {
                         setEditOpen(false);
@@ -120,10 +120,12 @@ export const History = ({ items, onClose, onSelect, onReload }: Props) => {
                 }
             }} confirmLabel="Save" cancelLabel="Cancel">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label style={{ fontSize: 12, color: '#999' }}>Question</label>
-                    <input value={editQuestion} onChange={(e) => setEditQuestion(e.target.value)} style={{ padding: 8, borderRadius: 6, border: '1px solid #ddd' }} />
-                    <label style={{ fontSize: 12, color: '#999' }}>Answer</label>
-                    <textarea value={editAnswer} onChange={(e) => setEditAnswer(e.target.value)} rows={6} style={{ padding: 8, borderRadius: 6, border: '1px solid #ddd' }} />
+                    <label style={{ fontSize: 12, color: '#999' }}>Conversation Title</label>
+                    <input
+                        value={editQuestion}
+                        onChange={(e) => setEditQuestion(e.target.value)}
+                        style={{ padding: 8, borderRadius: 6, border: '1px solid #ddd' }}
+                    />
                 </div>
             </Modal>
         </HistoryContainer>

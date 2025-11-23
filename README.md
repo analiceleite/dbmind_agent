@@ -58,6 +58,7 @@ Frontend and backend run locally or in containers; the database is automatically
    docker-compose up -d
    ```
 6. Access the frontend at: [http://localhost:3000](http://localhost:3000)
+7. [See example questions to ask the agent](#recommended-questions)
 
 #### Included Services
 - **frontend**: React interface for AI interaction and data visualization.
@@ -112,24 +113,68 @@ Frontend and backend run locally or in containers; the database is automatically
    ```sh
    cd backend
    deno task start
-   # Access: http://localhost:8000
    ```
 3. Frontend:
    ```sh
    cd frontend
    npm install
    npm run dev
-   # Access: http://localhost:3000
    ```
+4. Access the frontend at: [http://localhost:3000](http://localhost:3000)
+5. [See example questions to ask the agent](#recommended-questions)
 
 ---
 
 ## 🔧 Suggested Improvements
-- [ ] Add NGINX container as reverse proxy for HTTPS (Lets Encrypt).
-- [ ] Support for BI analytics (interactive charts).
-- [ ] Voice input with real-time transcription.
-- [ ] User-selectable AI mood/persona.
-- [ ] Automated deployment via CI/CD (GitHub Actions).
+- [ ] Add HTTPS with NGINX reverse proxy
+- [ ] Integrate BI analytics (charts/dashboards)
+- [ ] Enable voice input and transcription
+- [ ] User-selectable AI mood/persona
+- [ ] Automated CI/CD deployment
+- [ ] Multi-language support
+
+---
+
+## Recommended Questions
+
+Use these example questions to explore your company data and test the agent's capabilities:
+
+### 🛒 Product Insights
+- What products are available and what are their prices?
+- Which product was the best-seller this month?
+- What was our total sales revenue in November?
+- What are the three most expensive products?
+- How many units of the Notebook Pro were sold?
+
+### 👥 Customer Analytics
+- How many customers are currently registered?
+- Which customers are located in New York?
+- Who are our top-spending customers?
+- List customers registered in the last 6 months.
+
+### 💼 Employee & HR
+- How many employees work in the sales department?
+- What is the average employee salary?
+- Who is the most senior employee at the company?
+- List all managers and their salaries.
+
+### 💰 Finance & Budgets
+- What is the company’s total budget for 2025?
+- How much do we owe in unpaid debts?
+- What are our largest expenses with suppliers?
+- Which department has the largest budget?
+
+### 📦 Inventory & Suppliers
+- Which products have low stock (less than 20 units)?
+- Who are our suppliers and which cities are they from?
+- How much did we spend on suppliers this year?
+- Which invoices are still unpaid?
+
+### 🔍 Advanced & Cross-Table Queries
+- Which products were sold by Fernanda Lee?
+- Who bought the Smartphone X and on which date?
+- Which employee had the highest sales value last month?
+- List sales with customer name, product, and employee involved.
 
 ---
 

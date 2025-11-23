@@ -18,7 +18,7 @@ function loadConfig(): AppConfig {
   }
 
   return {
-    port: parseInt("8000", 10),
+    port: parseInt(Deno.env.get("PORT") || "8000", 10),
     zypher: {
       defaultModel: "claude-3-5-sonnet-20240620",
     },
