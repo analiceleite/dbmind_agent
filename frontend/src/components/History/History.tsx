@@ -25,7 +25,7 @@ export const History = ({ items, onClose, onSelect, onReload }: Props) => {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState<HistoryItem | null>(null);
     const [editQuestion, setEditQuestion] = useState('');
-    const [editAnswer, setEditAnswer] = useState('');
+    const [, setEditAnswer] = useState('');
     const [search, setSearch] = useState('');
     const displayedItems = useMemo(() => {
         const q = search.trim().toLowerCase();
