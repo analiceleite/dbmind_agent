@@ -72,7 +72,7 @@ The following commands where executed in Windows 11 environment.
    ```sh
    docker-compose up -d
    ```
-6. Access the frontend at: [http://localhost:3000](http://localhost:3000){ target="_blank" }
+6. Access the frontend at: [http://localhost:3000](http://localhost:3000)
 7. [See example questions to ask the agent](#recommended-questions)
 
 #### Included Services
@@ -135,7 +135,7 @@ The following commands where executed in Windows 11 environment.
    npm install
    npm run dev
    ```
-4. Access the frontend at: [http://localhost:3000](http://localhost:3000){ target="_blank" }
+4. Access the frontend at: [http://localhost:3000](http://localhost:3000)
 5. [See example questions to ask the agent](#recommended-questions)
 
 ---
