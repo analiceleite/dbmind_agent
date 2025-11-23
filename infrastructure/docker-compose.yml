@@ -11,15 +11,15 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     # LOCAL DEVELOPMENT ONLY: Uncomment the ports section to expose Postgres to the host machine
-    ports:
-    - "5432:5432"
+    # ports:
+    # - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     restart: unless-stopped
 
   backend:
-    image: ghcr.io/analiceleite/zypher_backend:v1.0.0
+    image: ghcr.io/analiceleite/zypher_backend:v1.0.1
     container_name: zypher_backend
     depends_on:
       - postgres
@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: ghcr.io/analiceleite/zypher_frontend:v1.0.0
+    image: ghcr.io/analiceleite/zypher_frontend:v1.0.1
     container_name: zypher_frontend
     ports:
       - "3000:80"
