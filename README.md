@@ -48,16 +48,31 @@ Frontend and backend run locally or in containers; the database is automatically
 - Anthropic key (get it from [Anthropic Console](https://console.anthropic.com/))
 
 ### Quick Start
+The following commands where executed in Windows 11 environment.
 
-1. Clone the repository.
-2. Enter the infrastructure folder.
-3. Adjust the `.env.example` file according to your environment.
-4. Rename the `.env.example` file to just `.env`.
+1. Clone and enter in this repository:
+   ```sh
+   git clone https://github.com/analiceleite/zypher_agent.git
+   cd zypher_agent 
+   ```
+2. Enter the infrastructure folder:
+   ```sh
+   cd infrastructure
+   ```
+3. Rename the `.env.example` file to just `.env`.
+   ```sh
+   move .env.example .env
+   ```
+4. Adjust the `.env` file according to your environment.
+   ```sh
+   notepad .env
+   # It is mandatory to change only the ANTHROPIC_API_KEY variable.
+   ```
 5. In the infrastructure folder, run:
    ```sh
    docker-compose up -d
    ```
-6. Access the frontend at: [http://localhost:3000](http://localhost:3000)
+6. Access the frontend at: [http://localhost:3000](http://localhost:3000){ target="_blank" }
 7. [See example questions to ask the agent](#recommended-questions)
 
 #### Included Services
@@ -120,7 +135,7 @@ Frontend and backend run locally or in containers; the database is automatically
    npm install
    npm run dev
    ```
-4. Access the frontend at: [http://localhost:3000](http://localhost:3000)
+4. Access the frontend at: [http://localhost:3000](http://localhost:3000){ target="_blank" }
 5. [See example questions to ask the agent](#recommended-questions)
 
 ---
