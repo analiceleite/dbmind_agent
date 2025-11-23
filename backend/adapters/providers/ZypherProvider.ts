@@ -33,7 +33,7 @@ Database Schema:
     prompt: string,
   ): Promise<{ rows: unknown[] | null; sql?: string | null } | null> {
     const sqlTask =
-      `You are an expert SQL query generator. Based on the following database schema:
+      `You are an expert SQL query generator. The target database is PostgreSQL — make sure any SQL you generate is Postgres-compatible. Based on the following database schema:
 
 ${this.dbSchema}
 
@@ -41,6 +41,7 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
 
 - If the question requires retrieving data, use SELECT and limit results to 10 rows if applicable.
 - Ensure the query is valid and directly executable.
+- Use PostgreSQL-compatible functions and date/interval syntax (e.g. prefer "CURRENT_DATE - INTERVAL '6 months'" instead of MySQL's DATE_SUB(...)).
 - Output ONLY the SQL query, with no explanations, comments, or code blocks.`;
 
     const sqlEvent$ = this.agent.runTask(sqlTask, "claude-3-5-haiku-20241022");
@@ -60,6 +61,25 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
     sqlQuery = sqlQuery
       .replace(/paid\s*=\s*0/g, "paid = false")
       .replace(/paid\s*=\s*1/g, "paid = true");
+
+    // Normalize MySQL DATE_SUB(...) and INTERVAL syntax to PostgreSQL-compatible form
+    // Examples:
+    //   DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH) -> CURRENT_DATE - INTERVAL '6 months'
+    //   DATE_SUB(NOW(), INTERVAL 7 DAY) -> NOW() - INTERVAL '7 days'
+    sqlQuery = sqlQuery.replace(/DATE_SUB\(\s*(NOW\(\)|CURRENT_DATE)\s*,\s*INTERVAL\s+(\d+)\s+(DAY|DAYS|MONTH|MONTHS|YEAR|YEARS|HOUR|HOURS)\s*\)/gi,
+      (_match, dateFn: string, count: string, unit: string) => {
+        const unitBase = unit.toLowerCase().replace(/s$/, "");
+        const normalizedUnit = `${unitBase}s`;
+        return `${dateFn} - INTERVAL '${count} ${normalizedUnit}'`;
+      });
+
+    // Convert bare INTERVAL <num> <unit> to quoted interval literal when missing quotes
+    sqlQuery = sqlQuery.replace(/INTERVAL\s+(\d+)\s+(DAY|DAYS|MONTH|MONTHS|YEAR|YEARS|HOUR|HOURS)(?!\s*')/gi,
+      (_match, count: string, unit: string) => {
+        const unitBase = unit.toLowerCase().replace(/s$/, "");
+        const normalizedUnit = `${unitBase}s`;
+        return `INTERVAL '${count} ${normalizedUnit}'`;
+      });
 
     console.log(`[ZypherProvider] SQL: ${sqlQuery}`);
 
