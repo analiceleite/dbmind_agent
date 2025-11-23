@@ -1,15 +1,15 @@
 # 🤖 DBMind Agent
 
-An intelligent database assistant that dynamically generates SQL queries and provides accurate answers based on company data. Built with Deno, React, and Zypher Agent, featuring real-time streaming chat and PostgreSQL integration with Anthropic Claude AI.
+An intelligent database assistant that dynamically generates SQL queries and provides answers about company data. Built with Deno, React, and Zypher Agent, featuring real-time streaming, PostgreSQL, and Anthropic Claude AI integration.
 
 ## 🏗️ Architecture
 
-The frontend and backend run locally, while the database runs on a cloud VM. AI processing is handled by Anthropic's Claude models via API.
+Frontend and backend run locally or in containers; the database is automatically initialized via container. AI processing is handled via Anthropic's API.
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  React Frontend (Port 5173)                     │
-│  - Chat interface for database queries          │
+│  React Frontend (Port 3000)                     │
+│  - Chat interface for queries                   │
 │  - Real-time streaming responses                │
 │  - WebSocket client                             │
 └────────────────┬────────────────────────────────┘
@@ -18,109 +18,120 @@ The frontend and backend run locally, while the database runs on a cloud VM. AI 
 ┌─────────────────────────────────────────────────┐
 │  Deno Backend (Port 8000)                       │
 │  - Intelligent SQL query generation             │
-│  - Database validation & execution              │
+│  - Query validation and execution               │
 │  - Zypher Agent + Anthropic Claude integration  │
 └────────────────┬────────────────────────────────┘
                  │
                  ↓
 ┌─────────────────────────────────────────────────┐
 │  PostgreSQL Database (Port 5432)                │
-│  - Company data (customers, sales, budgets)     │
+│  - Company data (clients, sales, etc.)          │
 │  - Source of truth for AI responses             │
 └─────────────────────────────────────────────────┘
                  │
                  ↓
 ┌─────────────────────────────────────────────────┐
 │  Anthropic Claude API                           │
-│  - claude-3-5-haiku-20241022 model              │
-│  - Real-time streaming AI responses             │
+│  - Claude 3.5/Haiku/Sonnet models               │
+│  - Real-time AI responses                       │
 └─────────────────────────────────────────────────┘
 ```
 
-## 🚀 Quick Start
+---
+
+# Deployment Guide — Zypher Agent
+
+## 🚀 Running the application in containers (recommended)
 
 ### Prerequisites
+- Docker and Docker Compose installed (Windows, Linux, or Mac).
+- Anthropic key (get it from [Anthropic Console](https://console.anthropic.com/))
+
+### Quick Start
+
+1. Download the file `infrastructure/zypher_agent_container.zip`.
+2. Extract its contents to a folder of your choice.
+3. Adjust the `.env.example` file according to your environment.
+4. Rename the `.env.example` file to just `.env`.
+5. In the extracted folder, run:
+   ```sh
+   docker-compose up -d
+   ```
+6. Access the frontend at: [http://localhost:3000](http://localhost:3000)
+
+#### Included Services
+- **frontend**: React interface for AI interaction and data visualization.
+- **backend**: Deno API connecting to AI, database, and processing queries.
+- **postgres**: PostgreSQL database with sample data.
+
+#### Environment Variables
+- Backend and database use variables from the `.env` file (example below):
+  ```env
+  POSTGRES_USER=zypher_user
+  POSTGRES_PASSWORD=zypher_secret
+  POSTGRES_DB=zypher_db
+  POSTGRES_HOST=postgres
+  ANTHROPIC_API_KEY=sk-... # your Anthropic key
+  ```
+- Place the `.env` file in the `backend` folder or adjust `docker-compose.yml` as needed.
+
+> **Note about the database:**
+> When running the application with Docker Compose, the Postgres service automatically starts with sample data loaded from the `init.sql` script. You do not need to install or configure Postgres manually — everything happens inside the container. The backend is already configured to connect to this database.
+
+#### Troubleshooting Tips
+- If any service fails to start, run:
+  ```sh
+  docker-compose logs backend
+  docker-compose logs frontend
+  docker-compose logs postgres
+  ```
+- Check if the database variables are correct and if the Anthropic key is valid.
+- To reset the database, remove the volume:
+  ```sh
+  docker-compose down -v
+  docker-compose up -d
+  ```
+
+---
+
+## 👩‍💻 Running locally with Deno and React (development)
+
+### Prerequisites
+- Docker installed (optional)
 - Deno installed
 - Node.js installed
-- Anthropic API key (get from [Anthropic Console](https://console.anthropic.com/))
+- Anthropic API key (get it from [Anthropic Console](https://console.anthropic.com/))
 
-### 1. Set Environment Variables
-```bash
-# Backend: Create .env file or export
-export ANTHROPIC_API_KEY=your_api_key_here
-```
+### Steps
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/analiceleite/zypher_agent.git
+   cd zypher_agent
+   ```
+2. Backend:
+   ```sh
+   cd backend
+   deno task start
+   # Access: http://localhost:8000
+   ```
+3. Frontend:
+   ```sh
+   cd frontend
+   npm install
+   npm run dev
+   # Access: http://localhost:3000
+   ```
 
-### 2. Start Database
-```bash
-# Start Postgres
-docker-compose -f infrastructure/docker-compose.yml up -d
-```
+---
 
-### 3. Start Backend
-```bash
-cd backend
-deno task start
-```
-Backend runs at `http://localhost:8000`
+## 🔧 Suggested Improvements
+- [ ] Add NGINX container as reverse proxy for HTTPS (Lets Encrypt).
+- [ ] Support for BI analytics (interactive charts).
+- [ ] Voice input with real-time transcription.
+- [ ] User-selectable AI mood/persona.
+- [ ] Automated deployment via CI/CD (GitHub Actions).
 
-### 4. Start Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Frontend runs at `http://localhost:5173`
+---
 
-## 📊 Features
-
-- ✅ Dynamic SQL query generation from natural language
-- ✅ Intelligent responses based only on available data
-- ✅ Real-time streaming chat with database insights
-- ✅ PostgreSQL integration with company data
-- ✅ WebSocket communication for instant responses
-- ✅ Dark/light theme support
-
-## 🛠️ Technology Stack
-
-| Component | Technology |
-|-----------|------------|
-| **Backend** | Deno + TypeScript |
-| **Frontend** | React + Vite |
-| **AI** | Zypher Agent + Anthropic Claude |
-| **Database** | PostgreSQL |
-| **Communication** | WebSocket |
-
-## 📁 Project Structure
-
-```
-zypher_agent/
-├── backend/              # Deno server
-├── frontend/             # React app
-├── infrastructure/       # Docker configs & SQL
-└── README.md
-```
-
-## 🐛 Troubleshooting
-
-**Database connection issues:**
-```bash
-# Reset database
-docker-compose -f infrastructure/docker-compose.yml down -v
-docker-compose -f infrastructure/docker-compose.yml up -d
-```
-
-**AI API issues:**
-- Ensure `ANTHROPIC_API_KEY` is set correctly
-- Check API rate limits in your Anthropic dashboard
-- Verify model availability: `claude-3-5-haiku-20241022`
-
-**Ports in use:**
-- Frontend: 5173
-- Backend: 8000
-- Database: 5432
-
-## 📚 Links
-
-- [Zypher Agent](https://jsr.io/@corespeed/zypher)
-- [Anthropic Claude](https://anthropic.com/)
-- [Deno](https://deno.land/)
+## 📬 Contact & Questions
+Open an issue on [GitHub](https://github.com/analiceleite/zypher_agent/issues) or send questions by email.

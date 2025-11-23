@@ -10,11 +10,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./fake_company.sql:/docker-entrypoint-initdb.d/fake_company.sql:ro
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     restart: unless-stopped
 
   backend:
@@ -29,7 +27,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: ghcr.io/analiceleite/zyper_frontend:v1.0.0
+    image: ghcr.io/analiceleite/zypher_frontend:v1.0.0
     container_name: zypher_frontend
     ports:
       - "3000:80"

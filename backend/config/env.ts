@@ -18,9 +18,9 @@ function loadConfig(): AppConfig {
   }
 
   return {
-    port: parseInt(Deno.env.get("PORT") || "8000", 10),
+    port: parseInt("8000", 10),
     zypher: {
-      defaultModel: Deno.env.get("DEFAULT_MODEL") || "claude-3-5-sonnet-20240620",
+      defaultModel: "claude-3-5-sonnet-20240620",
     },
     cors: {
       origin: "*",
