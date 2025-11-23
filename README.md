@@ -49,11 +49,11 @@ Frontend and backend run locally or in containers; the database is automatically
 
 ### Quick Start
 
-1. Download the file `infrastructure/zypher_agent_container.zip`.
-2. Extract its contents to a folder of your choice.
+1. Clone the repository.
+2. Enter the infrastructure folder.
 3. Adjust the `.env.example` file according to your environment.
 4. Rename the `.env.example` file to just `.env`.
-5. In the extracted folder, run:
+5. In the infrastructure folder, run:
    ```sh
    docker-compose up -d
    ```
