@@ -1,11 +1,11 @@
-name: zypher_agent
+name: zypher_stack
 
 services:
   postgres:
     image: postgres:15
-    container_name: postgres
+    container_name: zypher_database
     env_file:
-      - ../backend/.env
+      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -18,23 +18,19 @@ services:
     restart: unless-stopped
 
   backend:
-    image: ${BACKEND_IMAGE:-analiceleite/zypher_agent-backend:beta}
-    build:
-      context: ..
-      dockerfile: backend/Dockerfile
-    env_file:
-      - ../backend/.env
+    image: ghcr.io/analiceleite/zypher_backend:v1.0.0
+    container_name: zypher_backend
     depends_on:
       - postgres
+    env_file:
+      - .env
     ports:
       - "8000:8000"
     restart: unless-stopped
 
   frontend:
-    image: ${FRONTEND_IMAGE:-analiceleite/zypher_agent-frontend:beta}
-    build:
-      context: ..
-      dockerfile: frontend/Dockerfile
+    image: ghcr.io/analiceleite/zyper_frontend:v1.0.0
+    container_name: zypher_frontend
     ports:
       - "3000:80"
     depends_on:

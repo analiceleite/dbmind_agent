@@ -4,7 +4,7 @@ FROM denoland/deno:alpine
 WORKDIR /app
 
 # Copy backend files
-COPY backend/ ./
+COPY ./backend .
 
 # Cache dependencies and compile
 RUN deno cache server.ts
@@ -12,4 +12,4 @@ RUN deno cache server.ts
 EXPOSE 8000
 
 # Run the server with required permissions
-CMD ["run", "--allow-net", "--allow-env", "--allow-read", "--allow-write", "--no-check", "server.ts"]
+CMD ["run", "--allow-net", "--allow-env", "--allow-sys", "--allow-read", "--allow-write", "--no-check", "server.ts"]
