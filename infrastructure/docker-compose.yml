@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
 
   backend:
-    image: ghcr.io/analiceleite/zypher_backend:v1.0.1
+    image: ghcr.io/analiceleite/zypher_backend:v1.0.0
     container_name: zypher_backend
     depends_on:
       - postgres
@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: ghcr.io/analiceleite/zypher_frontend:v1.0.1
+    image: ghcr.io/analiceleite/zypher_frontend:v1.0.0
     container_name: zypher_frontend
     ports:
       - "3000:80"
