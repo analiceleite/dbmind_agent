@@ -120,7 +120,7 @@ function AppContent() {
       />
 
       {showHistory && (
-        <History items={historyItems} onClose={() => setShowHistory(false)} onSelect={selectHistory} onReload={reloadHistory} />
+        <History items={historyItems} onClose={() => setShowHistory(false)} onSelect={selectHistory} onReload={reloadHistory} apiUrl={apiUrl} />
       )}
       
       <ResponsiveInputContainer 

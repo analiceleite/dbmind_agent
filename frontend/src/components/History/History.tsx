@@ -18,9 +18,10 @@ interface Props {
     onClose: () => void;
     onSelect: (id: number) => void;
     onReload?: () => void;
+    apiUrl?: string;
 }
 
-export const History = ({ items, onClose, onSelect, onReload }: Props) => {
+export const History = ({ items, onClose, onSelect, onReload, apiUrl = 'http://127.0.0.1:8000' }: Props) => {
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState<HistoryItem | null>(null);
@@ -81,7 +82,7 @@ export const History = ({ items, onClose, onSelect, onReload }: Props) => {
             <Modal isOpen={deleteOpen} title="Delete history entry" onClose={() => setDeleteOpen(false)} onConfirm={async () => {
                 if (!currentItem) return;
                 try {
-                    const res = await fetch(`http://localhost:8000/history/${currentItem.id}`, { method: 'DELETE' });
+                    const res = await fetch(`${apiUrl}/history/${currentItem.id}`, { method: 'DELETE' });
                     if (res.status === 204) {
                         setDeleteOpen(false);
                         setCurrentItem(null);
@@ -102,7 +103,7 @@ export const History = ({ items, onClose, onSelect, onReload }: Props) => {
             <Modal isOpen={editOpen} title="Edit conversation title" onClose={() => setEditOpen(false)} onConfirm={async () => {
                 if (!currentItem) return;
                 try {
-                    const res = await fetch(`http://localhost:8000/history/${currentItem.id}`, {
+                    const res = await fetch(`${apiUrl}/history/${currentItem.id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ question: editQuestion })

@@ -83,6 +83,12 @@ Generate the most appropriate SQL query to answer the user's question: "${prompt
 
     console.log(`[ZypherProvider] SQL: ${sqlQuery}`);
 
+    // Validate SQL - must start with a valid command
+    if (!sqlQuery.match(/^(SELECT|WITH|INSERT|UPDATE|DELETE|CREATE|DROP)/i)) {
+      console.error(`[ZypherProvider] Invalid SQL generated: "${sqlQuery}"`);
+      return null;
+    }
+
     // Execute query
     const client = await pool.connect();
     try {
