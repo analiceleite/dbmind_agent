@@ -2,6 +2,40 @@
 
 An intelligent database assistant that dynamically generates SQL queries and provides answers about company data. Built with Deno, React, and Zypher Agent, featuring real-time streaming, PostgreSQL, and Anthropic Claude AI integration.
 
+## 📱 Interface & Features
+
+### Home - Start Your Journey
+![Home Screen](./assets/home.png)
+*Intuitive home screen to start new conversations and explore example questions*
+
+**Features:**
+- 🎯 Clean and intuitive interface
+- 📚 Pre-configured example questions
+- ⚡ Quick start for new conversations
+- 🎨 Modern and responsive design with light and dark mode
+
+---
+
+### Chat - Converse in Real-Time
+![Chat Screen](./assets/chat.png)
+*Chat interface with real-time streaming responses*
+
+**Features:**
+- 💬 Dynamically updated chat
+- 🔄 Real-time responses via WebSocket
+- 📝 Message history
+- 🧠 Intelligent AI answering your questions
+
+---
+
+### 📋 History & Conversation Management
+**Advanced features:**
+- 📌 Save and access previous conversations
+- 🔍 Quick search through history
+- 🗑️ Delete unnecessary conversations
+
+---
+
 ## 🏗️ Architecture
 
 Frontend and backend run locally or in containers; the database is automatically initialized via container. AI processing is handled via Anthropic's API.
