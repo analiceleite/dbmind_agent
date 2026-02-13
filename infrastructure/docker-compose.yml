@@ -19,18 +19,20 @@ services:
     restart: unless-stopped
 
   backend:
-    image: ghcr.io/analiceleite/zypher_backend:v1.0.0
+    image: ghcr.io/analiceleite/zypher_backend:v1.0.3
     container_name: zypher_backend
     depends_on:
       - postgres
     env_file:
       - .env
+    environment:
+      PUBLIC_HOST: localhost:8000
     ports:
       - "8000:8000"
     restart: unless-stopped
 
   frontend:
-    image: ghcr.io/analiceleite/zypher_frontend:v1.0.0
+    image: ghcr.io/analiceleite/zypher_frontend:v1.0.4
     container_name: zypher_frontend
     ports:
       - "3000:80"

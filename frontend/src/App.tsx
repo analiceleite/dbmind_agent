@@ -1,4 +1,4 @@
-import { useState, useRef, type FormEvent } from 'react';
+import { useState, useRef, type FormEvent, useEffect } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/GlobalStyles';
 import { useZypherAgent } from './hooks/useZypherAgent';
@@ -8,9 +8,24 @@ import { ChatMessages } from './components/ChatMessages/ChatMessages';
 import { SendIcon } from './components/LucideIcons/LucideIcons';
 import logo from './assets/images/corespeed-logo-new.svg';
 import { AppContainer, ResponsiveInputButton, ResponsiveInputContainer, ResponsiveInputField, ResponsiveInputForm, ResponsiveInputWrapper } from './AppStyle';
+import { getServerConfig } from './utils/serverConfig';
 
 function AppContent() {
-  const { messages, isConnected, isLoading, sendMessage, clearMessages, loadConversation, startNewConversation } = useZypherAgent('ws://localhost:8000/ws');
+  const [wsUrl, setWsUrl] = useState<string>('ws://localhost:8000/ws');
+  const [apiUrl, setApiUrl] = useState<string>('http://localhost:8000');
+
+  // Load server configuration on mount
+  useEffect(() => {
+    getServerConfig().then((config) => {
+      setWsUrl(config.wsUrl);
+      setApiUrl(config.apiUrl);
+      console.log('Server config loaded:', { wsUrl: config.wsUrl, apiUrl: config.apiUrl });
+    }).catch((error) => {
+      console.error('Failed to load server config:', error);
+    });
+  }, []);
+
+  const { messages, isConnected, isLoading, sendMessage, clearMessages, loadConversation, startNewConversation } = useZypherAgent(wsUrl);
   const [input, setInput] = useState('');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -32,7 +47,7 @@ function AppContent() {
 
   const reloadHistory = async () => {
     try {
-      const res = await fetch('http://localhost:8000/history');
+      const res = await fetch(`${apiUrl}/history`);
       if (res.ok) {
         const items = await res.json();
         setHistoryItems(items);
@@ -46,7 +61,7 @@ function AppContent() {
 
   const selectHistory = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:8000/history/${id}`);
+      const res = await fetch(`${apiUrl}/history/${id}`);
       if (!res.ok) return;
       const row = await res.json();
       // build messages to load into conversation

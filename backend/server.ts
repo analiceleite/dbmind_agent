@@ -9,6 +9,7 @@ import { ZypherProvider } from "./adapters/providers/ZypherProvider.ts";
 import { RunTaskUseCase } from "./application/RunTaskUseCase.ts";
 import { WebSocketHandler } from "./adapters/handlers/WebSocketHandler.ts";
 import { HttpHandler } from "./adapters/handlers/HttpHandler.ts";
+import { ConfigHandler } from "./adapters/handlers/ConfigHandler.ts";
 
 // Helper function to safely get environment variables
 function getRequiredEnv(name: string): string {
@@ -38,6 +39,7 @@ const runTaskUseCase = new RunTaskUseCase(zypherProvider);
 // Initialize handlers
 const wsHandler = new WebSocketHandler(runTaskUseCase);
 const httpHandler = new HttpHandler();
+const configHandler = new ConfigHandler();
 
 // HTTP server
 Deno.serve({ port: config.port }, (req) => {
@@ -46,6 +48,11 @@ Deno.serve({ port: config.port }, (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return httpHandler.handleOptions();
+  }
+
+  // Config endpoint - used by frontend to get server URLs
+  if (url.pathname === "/config") {
+    return configHandler.handleConfig(req);
   }
 
   // WebSocket endpoint for streaming agent responses
