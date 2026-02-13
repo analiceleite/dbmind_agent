@@ -2,6 +2,8 @@
 
 An intelligent database assistant that dynamically generates SQL queries and provides answers about company data. Built with Deno, React, and Zypher Agent, featuring real-time streaming, PostgreSQL, and Anthropic Claude AI integration.
 
+**Connect to any database and unlock insights through intelligent AI-powered queries — no SQL knowledge required.**
+
 ## 📱 Interface & Features
 
 ### Home - Start Your Journey
